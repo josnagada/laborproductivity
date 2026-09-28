@@ -1,0 +1,233 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+        .dashboard-hero h2 {
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .dashboard-hero p {
+            margin: 0;
+            opacity: 0.85;
+        }
+
+    .dashboard-date {
+        text-align: right;
+    }
+
+        .dashboard-date .date {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .dashboard-date .time {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .dashboard-date .day {
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        min-height: 120px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+    }
+
+    .stat-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-right: 18px;
+    }
+
+        .stat-icon.users {
+            background: #e8f1ff;
+        }
+
+    .stat-info .stat-label {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .stat-info .stat-number {
+        font-size: 30px;
+        font-weight: 700;
+        color: #333;
+    }
+
+</style>
+
+<div class="container-fluid">
+
+    <!-- Hero Dashboard -->
+    <div class="dashboard-hero">
+
+        <div class="row">
+
+            <div class="col-md-7">
+                <h2>Welcome Back, Admin!</h2>
+
+                <p>
+                    Labor Productivity Dashboard
+                </p>
+            </div>
+
+            <div class="col-md-5">
+                <div class="dashboard-date">
+
+                    <div class="date" id="current-date">
+                        17 September 2026
+                    </div>
+
+                    <div class="time" id="current-time">
+                        00:00:00
+                    </div>
+
+                    <div class="day" id="current-day">
+                        Thursday
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Data Summary -->
+    <div class="section-title">
+        Data Summary
+    </div>
+
+    <div class="row">
+
+        <!-- Total Users -->
+        <div class="col-lg-3 col-md-4 col-sm-6">
+
+            <div class="stat-card">
+
+                <div class="stat-icon users">
+                    👥
+                </div>
+
+                <div class="stat-info">
+
+                    <div class="stat-label">
+                        Total Users
+                    </div>
+
+                    <div class="stat-number">
+                        @ViewBag.TotalUsers
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        // Fungsi untuk memperbarui tanggal dan jam dashboard
+        function updateDateTime() {
+
+            const now = new Date();
+
+            // Format tanggal Indonesia
+            const dateOptions = {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            };
+
+            const dateText = now.toLocaleDateString(
+                'id-ID',
+                dateOptions
+            );
+
+            // Mengambil jam saat ini
+            const hours = String(
+                now.getHours()
+            ).padStart(2, '0');
+
+            const minutes = String(
+                now.getMinutes()
+            ).padStart(2, '0');
+
+            const seconds = String(
+                now.getSeconds()
+            ).padStart(2, '0');
+
+            // Format hari
+            const dayOptions = {
+                weekday: 'long'
+            };
+
+            const dayText = now.toLocaleDateString(
+                'id-ID',
+                dayOptions
+            );
+
+            // Menampilkan tanggal
+            document.getElementById(
+                'current-date'
+            ).textContent = dateText;
+
+            // Menampilkan jam
+            document.getElementById(
+                'current-time'
+            ).textContent =
+                hours + ':' + minutes + ':' + seconds;
+
+            // Menampilkan hari
+            document.getElementById(
+                'current-day'
+            ).textContent = dayText;
+        }
+
+        // Jalankan saat halaman pertama kali dibuka
+        updateDateTime();
+
+        // Perbarui jam setiap satu detik
+        setInterval(updateDateTime, 1000);
+
+    </script>
+}

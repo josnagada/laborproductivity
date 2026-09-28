@@ -1,0 +1,886 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - LaborProductivity</title>
+
+    <!-- Favicon aplikasi -->
+    <link rel="icon"
+          href="~/upload/favicon.ico"
+          type="image/x-icon" />
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+
+    <link rel="stylesheet"
+          href="~/LaborProductivity.styles.css"
+          asp-append-version="true" />
+
+    <style>
+
+        /* Menghilangkan margin bawaan body */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+        }
+
+        /* =========================================
+                                   TOP HEADER
+                                   ========================================= */
+
+        .admin-header {
+            height: 60px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .burger-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            color: #333;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .burger-btn:hover {
+                background-color: #f0f4f8;
+            }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* =========================================
+                                   PROFILE
+                                   ========================================= */
+
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .profile-info {
+            line-height: 1.2;
+        }
+
+        .profile-email {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-role {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Dropdown profile */
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .dropdown-item {
+            font-size: 14px;
+            padding: 10px 15px;
+        }
+
+        /* =========================================
+                                   SIDEBAR
+                                   ========================================= */
+
+        .admin-sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            bottom: 0;
+            width: 220px;
+            background-color: #ffffff;
+            border-right: 1px solid #ddd;
+            padding-top: 20px;
+            z-index: 900;
+        }
+
+        .sidebar-title {
+            padding: 0 20px 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 5px;
+            }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 20px;
+                color: #555;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+                .sidebar-menu a:hover {
+                    background-color: #f0f4f8;
+                    color: #007bff;
+                }
+
+                .sidebar-menu a.active {
+                    background-color: #e8f1ff;
+                    color: #007bff;
+                    font-weight: 600;
+                    border-right: 3px solid #007bff;
+                }
+
+        /* Submenu (misal: Master Data) */
+
+        .menu-parent {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .submenu-arrow {
+            font-size: 11px;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-parent[aria-expanded="true"] .submenu-arrow {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-submenu li {
+                margin-bottom: 0;
+            }
+
+            .sidebar-submenu a {
+                padding: 10px 20px 10px 48px;
+                font-size: 13px;
+                color: #666;
+            }
+
+                .sidebar-submenu a:hover {
+                    background-color: #f0f4f8;
+                    color: #007bff;
+                }
+
+                .sidebar-submenu a.active {
+                    background-color: #e8f1ff;
+                    color: #007bff;
+                    font-weight: 600;
+                    border-right: 3px solid #007bff;
+                }
+
+        /* =========================================
+                                   CONTENT
+                                   ========================================= */
+
+        .admin-content {
+            margin-left: 220px;
+            padding: 85px 30px 30px 30px;
+            min-height: 100vh;
+            transition: margin-left 0.25s ease;
+        }
+
+        /* =========================================
+                                   SIDEBAR COLLAPSED STATE
+                                   ========================================= */
+
+        .admin-sidebar {
+            transition: width 0.25s ease;
+        }
+
+        body.sidebar-collapsed .admin-sidebar {
+            width: 70px;
+        }
+
+        body.sidebar-collapsed .admin-content {
+            margin-left: 70px;
+        }
+
+        body.sidebar-collapsed .sidebar-title {
+            display: none;
+        }
+
+        body.sidebar-collapsed .sidebar-menu a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+            body.sidebar-collapsed .sidebar-menu a .menu-text {
+                display: none;
+            }
+
+            body.sidebar-collapsed .sidebar-menu a.active {
+                border-right: none;
+            }
+
+        body.sidebar-collapsed .submenu-arrow {
+            display: none;
+        }
+
+        body.sidebar-collapsed .sidebar-submenu {
+            display: none !important;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    @{
+        // Menentukan apakah user login termasuk salah satu role
+        // yang memiliki dashboard panel (admin, hr, ci, production)
+        bool isPanelUser =
+        User.IsInRole("admin") ||
+        User.IsInRole("hr") ||
+        User.IsInRole("ci") ||
+        User.IsInRole("production");
+
+        // Menentukan controller dashboard sesuai role user
+        string dashboardController =
+        User.IsInRole("admin") ? "Admin" :
+        User.IsInRole("hr") ? "Hr" :
+        User.IsInRole("ci") ? "Ci" :
+        "Production";
+    }
+
+    @if (isPanelUser)
+    {
+        <!-- =====================================
+             TOP HEADER
+             ===================================== -->
+
+        <header class="admin-header">
+
+            <div class="header-left">
+
+                <button type="button"
+                        id="sidebarToggle"
+                        class="burger-btn"
+                        aria-label="Toggle sidebar">
+                    ☰
+                </button>
+
+                @* menu di navbar *@
+                <a class="brand"
+                   asp-controller="@dashboardController"
+                   asp-action="Index">
+
+                    Labor Productivity
+
+                </a>
+
+            </div>
+
+
+            <!-- Profile Admin -->
+
+            <div class="dropdown">
+
+                <div class="profile-area dropdown-toggle"
+                     role="button"
+                     data-bs-toggle="dropdown"
+                     aria-expanded="false"
+                     style="cursor: pointer;">
+
+                    <div class="profile-icon">
+                        👤
+                    </div>
+
+                    <div class="profile-info">
+
+                        <div class="profile-email">
+                            @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                        </div>
+
+                        <div class="profile-role">
+                            @(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="margin-top: 8px;">
+
+                    <li>
+                        <form asp-controller="Login"
+                              asp-action="Logout"
+                              method="post"
+                              class="px-2"
+                              id="logoutForm">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="dropdown-item text-danger">
+                                🚪 &nbsp; Logout
+                            </button>
+
+                        </form>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================
+             SIDEBAR
+             ===================================== -->
+
+        <aside class="admin-sidebar">
+
+            <div class="sidebar-title">
+                Menu
+            </div>
+
+            <ul class="sidebar-menu">
+
+                <!-- Dashboard (mengikuti controller sesuai role) -->
+
+                <li>
+                    <a asp-controller="@dashboardController"
+                       asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == dashboardController && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                        📊 &nbsp; <span class="menu-text">Dashboard</span>
+
+                    </a>
+                </li>
+
+
+                @if (User.IsInRole("admin"))
+                {
+                    <!-- User Management (khusus admin) -->
+
+                    <li>
+                        <a asp-controller="Admin"
+                           asp-action="Users"
+                           class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
+
+                            👥 &nbsp; <span class="menu-text">Users</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Web Setting (isi menyusul, khusus admin) -->
+
+                    <li>
+                        <a asp-controller="Admin"
+                           asp-action="WebSetting">
+                            ⚙️
+                            <span>Web Setting</span>
+                        </a>
+                    </li>
+
+
+                    <!-- Footer Setting (isi menyusul, khusus admin) -->
+
+                    <li>
+                        <a href="#">
+
+                            📝 &nbsp; <span class="menu-text">Footer</span>
+
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("ci"))
+                {
+                   
+                    <!-- Master Data -->
+
+                    <li>
+                        <a href="#masterDataSubmenu"
+                           class="menu-parent"
+                           data-bs-toggle="collapse"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="masterDataSubmenu">
+
+                            <span>🗂️ &nbsp; <span class="menu-text">Master Data</span></span>
+
+                            <span class="submenu-arrow menu-text">▾</span>
+
+                        </a>
+
+                        <ul class="collapse sidebar-submenu" id="masterDataSubmenu">
+
+                            <!-- Department Category: untuk tambah department -->
+                            <li>
+                                <a href="/Ci/DepartmentCategory">
+                                    Department Category
+                                </a>
+                            </li>
+
+                            <!-- Data Master: untuk integrasi data melalui cost center -->
+                            <li>
+                                <a href="/Ci/DataMaster">
+                                    Data Master
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <!-- Baseline -->
+
+                    <li>
+                        <a asp-controller="Ci"
+                           asp-action="Baseline"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Ci" && ViewContext.RouteData.Values["Action"]?.ToString() == "Baseline" ? "active" : "")">
+
+                            📏 &nbsp; <span class="menu-text">Baseline</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Detail Productivity Report -->
+
+                    <li>
+                        <a asp-controller="Productivity"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Productivity" ? "active" : "")">
+
+                            📄 &nbsp; <span class="menu-text">Detail Productivity Report</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Performance Trend -->
+
+                    <li>
+                        <a asp-controller="Performance"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Performance" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                            📉 &nbsp; <span class="menu-text">Performance Trend</span>
+
+                        </a>
+                    </li>
+
+                    <!-- Headcount Trend (khusus ci) -->
+
+                    <li>
+                        <a asp-controller="HeadcountTrend"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HeadcountTrend" ? "active" : "")">
+
+                            👤 &nbsp; <span class="menu-text">Headcount Trend</span>
+
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("hr"))
+                {
+                    <!-- Work Hours (submenu, isi menyusul, khusus hr) -->
+
+                    <li>
+                        <a href="#workHoursSubmenu"
+                           class="menu-parent"
+                           data-bs-toggle="collapse"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="workHoursSubmenu">
+
+                            <span>⏱️ &nbsp; <span class="menu-text">Work Hours</span></span>
+
+                            <span class="submenu-arrow menu-text">▾</span>
+
+                        </a>
+
+                        <ul class="collapse sidebar-submenu" id="workHoursSubmenu">
+
+                            <!-- Input Work Hours -->
+                            <li>
+                                <a asp-controller="WorkHours"
+                                   asp-action="Index"
+                                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "WorkHours" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                                    Input Work Hours
+                                </a>
+                            </li>
+
+                            <!-- Work Hours Report -->
+                            <li>
+                                <a asp-controller="WorkHoursReport"
+                                   asp-action="Index"
+                                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "WorkHoursReport" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                                    Work Hours Report
+
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <!-- Detail Productivity Report -->
+
+                    <li>
+                        <a asp-controller="Productivity"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Productivity" ? "active" : "")">
+
+                            📄 &nbsp; <span class="menu-text">Detail Productivity Report</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Performance Trend -->
+
+                    <li>
+                        <a asp-controller="Performance"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Performance" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                            📉 &nbsp; <span class="menu-text">Performance Trend</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Headcount Trend (khusus hr) -->
+
+                    <li>
+                        <a asp-controller="HeadcountTrend"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HeadcountTrend" ? "active" : "")">
+
+                            👤 &nbsp; <span class="menu-text">Headcount Trend</span>
+
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("production"))
+                {
+                    <!-- Production Output -->
+
+                    <li>
+                        <a href="#productionOutputSubmenu"
+                           class="menu-parent"
+                           data-bs-toggle="collapse"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="productionOutputSubmenu">
+
+                            <span>
+                                🏭 &nbsp;
+                                <span class="menu-text">Add Production Output</span>
+                            </span>
+
+                            <span class="submenu-arrow menu-text">▾</span>
+
+                        </a>
+
+                        <ul class="collapse sidebar-submenu" id="productionOutputSubmenu">
+
+                            <!-- Input Production Output -->
+                            <li>
+                                <a asp-controller="Production"
+                                   asp-action="ProductionOutput"
+                                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Production" && ViewContext.RouteData.Values["Action"]?.ToString() == "ProductionOutput" ? "active" : "")">
+
+                                    Input Production Output
+
+                                </a>
+                            </li>
+
+                            <!-- Production Report -->
+                            <li>
+                                <a asp-controller="Production"
+                                   asp-action="ProductionReport"
+                                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Production" && ViewContext.RouteData.Values["Action"]?.ToString() == "ProductionReport" ? "active" : "")">
+
+                                    Production Report
+
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <!-- Detail Productivity Report -->
+
+                    <li>
+                        <a asp-controller="Productivity"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Productivity" ? "active" : "")">
+
+                            📄 &nbsp;
+                            <span class="menu-text">Detail Productivity Report</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Performance Trend -->
+
+                    <li>
+                        <a asp-controller="Performance"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Performance" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                            📉 &nbsp;
+                            <span class="menu-text">Performance Trend</span>
+
+                        </a>
+                    </li>
+
+
+                    <!-- Headcount Trend -->
+
+                    <li>
+                        <a asp-controller="HeadcountTrend"
+                           asp-action="Index"
+                           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HeadcountTrend" ? "active" : "")">
+
+                            👤 &nbsp;
+                            <span class="menu-text">Headcount Trend</span>
+
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+        </aside>
+
+
+        <!-- =====================================
+             MAIN CONTENT
+             ===================================== -->
+
+        <main class="admin-content">
+
+            @RenderBody()
+
+        </main>
+
+    }
+    else
+    {
+        <!-- Layout biasa untuk halaman non-admin -->
+
+        <header>
+
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+                <div class="container-fluid">
+
+                    <a class="navbar-brand"
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        LaborProductivity
+
+                    </a>
+
+                </div>
+
+            </nav>
+
+        </header>
+
+
+        <div class="container">
+
+            <main role="main" class="pb-3">
+
+                @RenderBody()
+
+            </main>
+
+        </div>
+
+    }
+
+
+    <!-- =====================================
+         JAVASCRIPT
+         ===================================== -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["LoginSuccess"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Login Berhasil",
+                    text: "@TempData["LoginSuccess"]",
+                    showConfirmButton: true,
+                    timer: 1800,
+                    confirmButtonText: "OK"
+                });
+
+            });
+        </script>
+    }
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+    <!-- SweetAlert -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const logoutForm = document.getElementById("logoutForm");
+
+            if (logoutForm) {
+
+                logoutForm.addEventListener("submit", function (event) {
+
+                    // Mencegah form langsung melakukan logout
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: 'Exit the app?',
+                        text: 'Are you sure you want to log out?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Logout',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then((result) => {
+
+                        // Jika user menekan "Ya, Logout"
+                        if (result.isConfirmed) {
+                            logoutForm.submit();
+                        }
+
+                    });
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+    <!-- Sidebar Toggle -->
+
+    <script>
+
+        (function () {
+
+            var body = document.body;
+            var toggleBtn = document.getElementById('sidebarToggle');
+
+            // Menerapkan status collapsed yang tersimpan sebelumnya
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                body.classList.add('sidebar-collapsed');
+            }
+
+            if (toggleBtn) {
+
+                toggleBtn.addEventListener('click', function () {
+
+                    body.classList.toggle('sidebar-collapsed');
+
+                    // Menyimpan status sidebar ke localStorage
+                    localStorage.setItem(
+                        'sidebarCollapsed',
+                        body.classList.contains('sidebar-collapsed')
+                    );
+
+                });
+
+            }
+
+        })();
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

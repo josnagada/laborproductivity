@@ -1,0 +1,161 @@
+﻿@model IEnumerable<LaborProductivity.Models.Department>
+
+@{
+    ViewData["Title"] = "Department Category";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            @* judul department category *@
+            <h2>Department Category</h2>
+
+            @* deskripsi department category *@
+            <p class="text-muted mb-0">
+                Manage the department data used for labor productivity.
+            </p>
+        </div>
+
+        <a href="/Ci/CreateDepartment"
+           class="btn btn-primary">
+            + Add Department
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+    <th style="width: 80px;">
+        No
+    </th>
+
+    <th>
+        Department Name
+    </th>
+
+    <th style="width: 180px;">
+        Action
+    </th>
+</tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int no = 1;
+                        }
+
+                        @foreach (var department in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @no
+                                </td>
+
+                                <td>
+                                    @department.DepartmentName
+                                </td>
+
+                                <td>
+
+    <a href="/Ci/EditDepartment/@department.DepartmentId"
+       class="btn btn-sm btn-warning">
+        Edit
+    </a>
+
+    <form action="/Ci/DeleteDepartment/@department.DepartmentId"
+          method="post"
+          class="d-inline">
+
+        @Html.AntiForgeryToken()
+
+
+        @* deletebutton *@
+        <button type="submit"
+        class="btn btn-sm btn-danger"
+        onclick="return confirmDelete(this);">
+    Delete
+</button>
+
+    </form>
+
+</td>
+
+                            </tr>
+
+                            no++;
+                        }
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+
+                                <td colspan="3"
+                                    class="text-center text-muted">
+
+                                    Belum ada data department.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(button) {
+            Swal.fire({
+                title: 'Hapus Department?',
+                text: 'Data department yang dihapus tidak dapat dikembalikan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('form').submit();
+                }
+            });
+
+            return false;
+        }
+                @if (TempData["SuccessMessage"] != null)
+        {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: '@TempData["SuccessMessage"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+        }
+
+    </script>
+}

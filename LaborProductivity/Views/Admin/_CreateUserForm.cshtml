@@ -1,0 +1,521 @@
+﻿@model LaborProductivity.Models.CreateUserViewModel
+
+<form asp-controller="Admin"
+      asp-action="CreateUser"
+      method="post">
+
+    <input type="hidden"
+           name="fromModal"
+           value="true" />
+
+    <!-- Email -->
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">
+            Email
+        </label>
+
+        <input asp-for="Email"
+               type="email"
+               class="form-control"
+               placeholder="example@gmail.com"
+               autocomplete="off" />
+
+        <span asp-validation-for="Email"
+              class="text-danger">
+        </span>
+    </div>
+
+
+    <!-- Password -->
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">
+            Password
+        </label>
+
+        <div class="input-group">
+
+            <input asp-for="Password"
+                   type="password"
+                   class="form-control"
+                   id="passwordInput"
+                   placeholder="Masukkan password"
+                   autocomplete="new-password" />
+
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    id="togglePassword"
+                    title="Tampilkan password">
+
+                👁
+
+            </button>
+
+        </div>
+
+        <span asp-validation-for="Password"
+              class="text-danger">
+        </span>
+    </div>
+
+
+    <!-- Role -->
+    <div class="mb-3">
+        <label asp-for="Role" class="form-label">
+            Role
+        </label>
+
+        <select asp-for="Role"
+                id="roleSelect"
+                class="form-select">
+
+            <option value="">
+                -- Pilih Role --
+            </option>
+
+            <option value="hr">
+                Human Resource
+            </option>
+
+            <option value="ci">
+                Continuous Improvement
+            </option>
+
+            <option value="production">
+                Production
+            </option>
+
+        </select>
+
+        <span asp-validation-for="Role"
+              class="text-danger">
+        </span>
+    </div>
+
+
+    <!--
+        Bagian ini hanya digunakan untuk user Production.
+        HR dan CI tidak membutuhkan scope Production.
+    -->
+    <div id="productionScopeSection"
+         style="display: none;">
+
+        <!-- Department -->
+        <div class="mb-3">
+
+            <label asp-for="DepartmentId"
+                   class="form-label">
+                Department
+            </label>
+
+            <select asp-for="DepartmentId"
+                    id="departmentSelect"
+                    class="form-select">
+
+                <option value="">
+                    -- Pilih Department --
+                </option>
+
+                @foreach (var department in Model.Departments)
+                {
+                    <option value="@department.DepartmentId">
+                        @department.DepartmentName
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="DepartmentId"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+
+        <!-- CC / Product Group -->
+        <div class="mb-3">
+
+            <label asp-for="CostCenter"
+                   class="form-label">
+                CC / Product Group
+            </label>
+
+            <select id="dataMasterSelect"
+                    name="CostCenter"
+                    class="form-select">
+
+                <option value="">
+                    -- Pilih CC / Product Group --
+                </option>
+
+                @foreach (var dataMaster in Model.DataMasters
+                                .GroupBy(dm => new
+                                {
+                                    dm.CostCenter,
+                                    dm.ProductGroup,
+                                    dm.DepartmentId
+                                })
+                                .OrderBy(g => g.Key.CostCenter)
+                                .ThenBy(g => g.Key.ProductGroup))
+                {
+                    <option value="@dataMaster.Key.CostCenter"
+                            data-department-id="@dataMaster.Key.DepartmentId"
+                            data-product-group="@dataMaster.Key.ProductGroup">
+
+                        @dataMaster.Key.CostCenter -
+                        @dataMaster.Key.ProductGroup
+
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="CostCenter"
+                  class="text-danger">
+            </span>
+
+
+            <!--
+                Product Group dikirim sebagai field terpisah.
+                User tidak memilih Product Line di sini.
+            -->
+            <input type="hidden"
+                   asp-for="ProductGroup"
+                   id="productGroupHidden" />
+
+            <small class="text-muted d-block mt-2">
+                Akun ini hanya dapat menginput data Production
+                untuk Product Line yang berada dalam
+                CC/Product Group yang dipilih.
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- Status -->
+    <div class="mb-3">
+
+        <label asp-for="Status"
+               class="form-label">
+            Status
+        </label>
+
+        <select asp-for="Status"
+                class="form-select">
+
+            <option value="active">
+                Active
+            </option>
+
+            <option value="inactive">
+                Inactive
+            </option>
+
+        </select>
+
+        <span asp-validation-for="Status"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <!-- Tombol -->
+    <div class="d-flex justify-content-end gap-2 mt-4">
+
+        <button type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+            Batal
+        </button>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Simpan User
+        </button>
+
+    </div>
+
+</form>
+
+
+<script>
+
+    // Mengambil elemen yang diperlukan dari form
+    const roleSelect =
+        document.getElementById("roleSelect");
+
+    const productionScopeSection =
+        document.getElementById("productionScopeSection");
+
+    const departmentSelect =
+        document.getElementById("departmentSelect");
+
+    const dataMasterSelect =
+        document.getElementById("dataMasterSelect");
+
+    const productGroupHidden =
+        document.getElementById("productGroupHidden");
+
+
+    // Menampilkan atau menyembunyikan
+    // bagian khusus Production.
+    function updateProductionScopeVisibility() {
+
+        if (roleSelect.value === "production") {
+
+            productionScopeSection.style.display = "block";
+
+        }
+        else {
+
+            productionScopeSection.style.display = "none";
+
+            departmentSelect.value = "";
+
+            dataMasterSelect.value = "";
+
+            productGroupHidden.value = "";
+        }
+    }
+
+
+    // Memfilter CC / Product Group
+    // berdasarkan Department.
+    function updateCostCenterOptions() {
+
+        const selectedDepartment =
+            departmentSelect.value;
+
+        const options =
+            dataMasterSelect.querySelectorAll("option");
+
+
+        options.forEach(function (option, index) {
+
+            // Option pertama adalah placeholder.
+            if (index === 0) {
+
+                option.hidden = false;
+
+                return;
+            }
+
+
+            const optionDepartment =
+                option.getAttribute(
+                    "data-department-id"
+                );
+
+
+            if (
+                selectedDepartment === "" ||
+                optionDepartment === selectedDepartment
+            ) {
+
+                option.hidden = false;
+
+            }
+            else {
+
+                option.hidden = true;
+            }
+
+        });
+
+
+        // Reset pilihan setelah Department berubah.
+        dataMasterSelect.value = "";
+
+        productGroupHidden.value = "";
+    }
+
+
+    // Ketika Role berubah.
+    roleSelect.addEventListener(
+        "change",
+        updateProductionScopeVisibility
+    );
+
+
+    // Ketika Department berubah.
+    departmentSelect.addEventListener(
+        "change",
+        updateCostCenterOptions
+    );
+
+
+    // Ketika CC / Product Group dipilih.
+    dataMasterSelect.addEventListener(
+        "change",
+        function () {
+
+            const selectedOption =
+                dataMasterSelect.options[
+                    dataMasterSelect.selectedIndex
+                ];
+
+
+            const productGroup =
+                selectedOption.getAttribute(
+                    "data-product-group"
+                );
+
+
+            productGroupHidden.value =
+                productGroup || "";
+
+        }
+    );
+
+
+    // Kondisi awal halaman.
+    updateProductionScopeVisibility();
+
+
+    // Tombol untuk menampilkan atau menyembunyikan password.
+    const passwordInput =
+        document.getElementById("passwordInput");
+
+    const togglePassword =
+        document.getElementById("togglePassword");
+
+
+    togglePassword.addEventListener(
+        "click",
+        function () {
+
+            if (passwordInput.type === "password") {
+
+                passwordInput.type = "text";
+
+                togglePassword.textContent = "🙈";
+
+                togglePassword.title =
+                    "Sembunyikan password";
+
+            }
+            else {
+
+                passwordInput.type = "password";
+
+                togglePassword.textContent = "👁";
+
+                togglePassword.title =
+                    "Tampilkan password";
+            }
+
+        }
+    );
+
+
+    // Mengambil form Tambah User.
+    const createUserForm =
+        document.querySelector("#createUserModal form");
+
+
+    // Menangani submit form menggunakan JavaScript.
+    // Dengan cara ini response JSON dari Controller
+    // tidak akan dibuka sebagai halaman baru.
+    createUserForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            // Mencegah submit normal dari browser.
+            event.preventDefault();
+
+
+            // Mengambil seluruh data dari form.
+            const formData =
+                new FormData(createUserForm);
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        createUserForm.action,
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                // Jika user berhasil dibuat.
+                if (result.success) {
+
+                    // Tampilkan SweetAlert
+                    // sebelum berpindah ke halaman Users.
+                    await Swal.fire({
+                        icon: "success",
+                        title: "Berhasil!",
+                        text: "User berhasil ditambahkan.",
+                        confirmButtonText: "OK"
+                    });
+
+                    // Setelah tombol OK ditekan,
+                    // kembali ke halaman User Management.
+                    window.location.href =
+                        "/Admin/Users";
+
+                    return;
+                }
+
+
+                // Hapus pesan validasi sebelumnya.
+                createUserForm
+                    .querySelectorAll(".text-danger")
+                    .forEach(function (element) {
+
+                        element.textContent = "";
+
+                    });
+
+
+                // Jika terdapat error validasi,
+                // tampilkan error pada field yang sesuai.
+                if (result.errors) {
+
+                    Object.keys(result.errors)
+                        .forEach(function (key) {
+
+                            const messages =
+                                result.errors[key];
+
+
+                            const validationMessage =
+                                createUserForm.querySelector(
+                                    `[data-valmsg-for="${key}"]`
+                                );
+
+
+                            if (validationMessage) {
+
+                                validationMessage.textContent =
+                                    messages.join(", ");
+
+                            }
+
+                        });
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Terjadi kesalahan:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+</script>

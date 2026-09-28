@@ -1,0 +1,259 @@
+﻿@model List<LaborProductivity.Models.User>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/users.css"
+          asp-append-version="true" />
+}
+
+<div class="container-fluid">
+
+    <!-- Header halaman -->
+    <div class="user-page-header">
+
+        <div>
+            <h1 class="user-page-title">
+                User Management
+            </h1>
+
+            <p class="user-page-description">
+                Manage user accounts and system access rights.
+            </p>
+        </div>
+
+        <!-- Button Tambah User di sebelah kanan -->
+        <button type="button"
+                class="btn btn-primary btn-add-user"
+                data-bs-toggle="modal"
+                data-bs-target="#createUserModal">
+
+            <span class="add-user-icon">＋</span>
+
+            <span>
+                Tambah User
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- Card tabel users -->
+    <div class="user-management-card">
+
+        <div class="table-responsive">
+
+            <table class="table user-table mb-0">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-end">Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var user in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @user.Id
+                                </td>
+
+                                <td>
+                                    <div class="user-email">
+                                        @user.Email
+                                    </div>
+                                </td>
+
+                                <td>
+
+                                    @if (user.Role == "admin")
+                                    {
+                                        <span class="role-badge role-admin">
+                                            Admin
+                                        </span>
+                                    }
+                                    else if (user.Role == "hr")
+                                    {
+                                        <span class="role-badge role-hr">
+                                            Human Resource
+                                        </span>
+                                    }
+                                    else if (user.Role == "ci")
+                                    {
+                                        <span class="role-badge role-ci">
+                                            Continuous Improvement
+                                        </span>
+                                    }
+                                    else if (user.Role == "production")
+                                    {
+                                        <span class="role-badge role-production">
+                                            Production
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="role-badge">
+                                            @user.Role
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (user.Status == "active")
+                                    {
+                                        <span class="status-badge status-active">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    @if (user.Role != "admin")
+                                    {
+                                        <div class="user-action-buttons">
+
+                                            <a asp-controller="Admin"
+                                               asp-action="EditUser"
+                                               asp-route-id="@user.Id"
+                                               class="btn btn-warning btn-sm">
+                                                Edit
+                                            </a>
+
+                                            <form asp-controller="Admin"
+                                                  asp-action="DeleteUser"
+                                                  method="post"
+                                                  class="d-inline"
+                                                  onsubmit="return confirmDeleteUser('@user.Email');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@user.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-danger btn-sm">
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="user-protected">
+                                            Protected
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">
+
+                                <div class="empty-users">
+
+                                    <div class="empty-users-icon">
+                                        👤
+                                    </div>
+
+                                    <h5>
+                                        Belum ada user
+                                    </h5>
+
+                                    <p>
+                                        Belum ada akun pengguna yang tersedia.
+                                    </p>
+
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Modal Tambah User -->
+<div class="modal fade"
+     id="createUserModal"
+     tabindex="-1"
+     aria-labelledby="createUserModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="createUserModalLabel">
+                    Tambah User
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p class="text-muted">
+                    Tambahkan akun pengguna baru ke dalam sistem.
+                </p>
+
+                <partial name="_CreateUserForm"
+                         model="new LaborProductivity.Models.CreateUserViewModel
+                         {
+                             Departments = ViewBag.Departments,
+                             DataMasters = ViewBag.DataMasters
+                         }" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

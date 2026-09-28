@@ -1,0 +1,176 @@
+﻿@model LaborProductivity.Models.ProductionOutput
+
+@{
+    ViewData["Title"] = "Edit Production Output";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Production Output</h2>
+            <p class="text-muted mb-0">
+                Perbarui data Production Output.
+            </p>
+        </div>
+
+        <a asp-controller="Production"
+           asp-action="ProductionOutput"
+           class="btn btn-secondary">
+            Kembali
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-controller="Production"
+                  asp-action="EditProductionOutput"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.ProductionOutputId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- Finish Date -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Finish Date
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.FinishDate.ToString("yyyy-MM-dd")"
+                           readonly />
+                </div>
+
+                <!-- Fiscal Week -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Fiscal Week
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="Week @Model.WeekNo"
+                           readonly />
+                </div>
+
+                <!-- Cost Center -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Cost Center
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.DataMaster?.CostCenter"
+                           readonly />
+                </div>
+
+                <!-- Department -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Department
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.DataMaster?.Department?.DepartmentName"
+                           readonly />
+                </div>
+
+                <!-- Product Group -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Product Group
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.DataMaster?.ProductGroup"
+                           readonly />
+                </div>
+
+                <!-- Product Line -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Product Line
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.DataMaster?.ProductLine"
+                           readonly />
+                </div>
+
+                <!-- Quality Input -->
+                <div class="mb-3">
+                    <label for="qualityInput"
+                           class="form-label">
+                        Quality Input
+                    </label>
+
+                    <input type="number"
+                           id="qualityInput"
+                           name="QualityInput"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           value="@Model.QualityInput"
+                           required />
+
+                    <span asp-validation-for="QualityInput"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Quality Output -->
+                <div class="mb-3">
+                    <label for="qualityOutput"
+                           class="form-label">
+                        Quality Output
+                    </label>
+
+                    <input type="number"
+                           id="qualityOutput"
+                           name="QualityOutput"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           value="@Model.QualityOutput"
+                           required />
+
+                    <span asp-validation-for="QualityOutput"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Simpan Perubahan
+                    </button>
+
+                    <a asp-controller="Production"
+                       asp-action="ProductionOutput"
+                       class="btn btn-secondary">
+                        Batal
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

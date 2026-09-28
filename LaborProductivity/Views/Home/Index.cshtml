@@ -1,0 +1,250 @@
+﻿@model LaborProductivity.Models.Setting
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Labor Productivity";
+}
+
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Labor Productivity</title>
+
+    <!-- Favicon aplikasi -->
+    <link rel="icon"
+          href="~/upload/favicon.ico"
+          type="image/x-icon" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- CSS Landing Page -->
+    <link rel="stylesheet"
+          href="~/css/landing.css"
+          asp-append-version="true" />
+   
+
+</head>
+
+<body>
+
+   
+    <!-- ==============================
+         NAVBAR
+         ============================== -->
+
+    <nav class="landing-navbar">
+
+        <!-- Logo aplikasi -->
+        <a asp-controller="Home"
+           asp-action="Index">
+
+            @if (!string.IsNullOrEmpty(Model?.Logo))
+            {
+                <img src="~/uploads/settings/@Model.Logo"
+                     alt="@Model.AppName"
+                     style="max-height: 45px; max-width: 180px; width: auto; height: auto;" />
+            }
+            else
+            {
+                <span>@Model?.AppName</span>
+            }
+
+        </a>
+
+        <!-- Tombol Login -->
+        <a asp-controller="Login"
+           asp-action="Index"
+           class="login-button">
+            Login
+        </a>
+
+    </nav>
+
+
+    <!-- ==============================
+         CAROUSEL / SLIDER
+         ============================== -->
+
+    <section class="landing-carousel">
+
+        <div id="landingCarousel"
+             class="carousel slide"
+             data-bs-ride="carousel">
+
+            <!-- Indicator -->
+            <div class="carousel-indicators">
+
+                <button type="button"
+                        data-bs-target="#landingCarousel"
+                        data-bs-slide-to="0"
+                        class="active"
+                        aria-current="true"
+                        aria-label="Slide 1">
+                </button>
+
+                <button type="button"
+                        data-bs-target="#landingCarousel"
+                        data-bs-slide-to="1"
+                        aria-label="Slide 2">
+                </button>
+
+                <button type="button"
+                        data-bs-target="#landingCarousel"
+                        data-bs-slide-to="2"
+                        aria-label="Slide 3">
+                </button>
+
+            </div>
+
+
+            <!-- Isi Carousel -->
+            <div class="carousel-inner">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+
+                    <div class="carousel-slide"
+                         style="background-image: url('@(string.IsNullOrEmpty(Model?.Carousel1) ? "/images/slider-1.jpg" : "/uploads/settings/" + Model.Carousel1)');">
+
+                        <div class="carousel-overlay"></div>
+
+                        <div class="carousel-content">
+
+                            <h1>Labor Productivity</h1>
+
+                            <p>
+                                Monitor productivity
+                                more easily through a single system.
+                            </p>
+
+                            <a asp-controller="Login"
+                               asp-action="Index"
+                               class="slide-button">
+                                Login
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+
+                    <div class="carousel-slide"
+                         style="background-image: url('@(string.IsNullOrEmpty(Model?.Carousel2) ? "/images/slider-2.jpg" : "/uploads/settings/" + Model.Carousel2)');">
+
+                        <div class="carousel-overlay"></div>
+
+                        <div class="carousel-content">
+
+                            <h1>Production Monitoring</h1>
+
+                            <p>
+                                Monitor working hours and production output to productivity monitoring.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Slide 3 -->
+                <div class="carousel-item">
+
+                    <div class="carousel-slide"
+                         style="background-image: url('@(string.IsNullOrEmpty(Model?.Carousel3) ? "/images/slider-3.jpg" : "/uploads/settings/" + Model.Carousel3)');">
+
+                        <div class="carousel-overlay"></div>
+
+                        <div class="carousel-content">
+
+                            <h1>Performance Analytics</h1>
+
+                            <p>
+                                Use productivity data to view performance and trends over time.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Tombol Previous -->
+            <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#landingCarousel"
+                    data-bs-slide="prev">
+
+                <span class="carousel-control-prev-icon"
+                      aria-hidden="true">
+                </span>
+
+                <span class="visually-hidden">
+                    Previous
+                </span>
+
+            </button>
+
+
+            <!-- Tombol Next -->
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#landingCarousel"
+                    data-bs-slide="next">
+
+                <span class="carousel-control-next-icon"
+                      aria-hidden="true">
+                </span>
+
+                <span class="visually-hidden">
+                    Next
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+    
+
+    <!-- ==============================
+         FOOTER
+         ============================== -->
+
+    <footer class="landing-footer">
+
+        @if (!string.IsNullOrWhiteSpace(Model?.FooterText))
+        {
+            @Model.FooterText
+        }
+        else
+        {
+            <span>© 2026 Labor Productivity</span>
+        }
+
+    </footer>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>

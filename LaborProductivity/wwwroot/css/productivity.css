@@ -1,0 +1,205 @@
+﻿/* =========================================================
+   PRODUCTIVITY REPORT TABLE
+   ========================================================= */
+
+/* Wrapper tabel agar bisa horizontal scroll */
+.productivity-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.productivity-table {
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+
+    /* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+    .productivity-table thead th {
+        background-color: #1f3a56;
+        color: #ffffff;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        border-right: 1px solid #48627c;
+        border-bottom: 1px solid #48627c;
+        padding: 10px 12px;
+    }
+
+
+    /* Header baris pertama:
+   Week 1, Week 2, ..., Total */
+    .productivity-table thead tr:first-child th {
+        font-size: 13px;
+        padding-top: 11px;
+        padding-bottom: 11px;
+    }
+
+
+    /* Header baris kedua:
+   Normal Hours, Work Hours, OT, dst. */
+    .productivity-table thead tr:nth-child(2) th {
+        background-color: #f1f5f9;
+        color: #374151;
+        border-right: 1px solid #dbe2e8;
+        border-bottom: 1px solid #dbe2e8;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+   STICKY COLUMN
+   ========================================================= */
+
+    /*
+   HANYA kolom CC - Product Line yang sticky.
+
+   Jangan menggunakan:
+       thead th:first-child
+
+   karena pada tabel Detail header memiliki rowspan="2".
+*/
+
+
+    /* CC - Product Line pada HEADER */
+    .productivity-table thead th.sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 5;
+        min-width: 170px;
+        text-align: left;
+        background-color: #1f3a56;
+    }
+
+
+    /* CC - Product Line pada BODY */
+    .productivity-table tbody td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 3;
+        min-width: 170px;
+        text-align: left;
+        background-color: #ffffff;
+        font-weight: 600;
+        color: #1f3a56;
+    }
+
+
+    /* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+    .productivity-table tbody td {
+        padding: 9px 12px;
+        border-right: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+        vertical-align: middle;
+        text-align: right;
+        color: #374151;
+        background-color: #ffffff;
+    }
+
+
+    /* =========================================================
+   HOVER ROW
+   ========================================================= */
+
+    .productivity-table tbody tr:hover td {
+        background-color: #f8fafc;
+    }
+
+
+        /*
+   Karena CC - Product Line sticky,
+   background-nya juga harus berubah saat hover.
+*/
+        .productivity-table tbody tr:hover td:first-child {
+            background-color: #f8fafc;
+        }
+
+
+    /* =========================================================
+   TOTAL COLUMN
+   ========================================================= */
+
+    .productivity-table tbody td.total-column {
+        background-color: #f8fafc;
+        font-weight: 600;
+    }
+
+
+/* =========================================================
+   SAVING
+   ========================================================= */
+
+/* Saving positif */
+.saving-positive {
+    color: #15803d !important;
+    font-weight: 700;
+}
+
+
+/* Saving negatif */
+.saving-negative {
+    color: #dc2626 !important;
+    font-weight: 700;
+}
+
+
+/* Saving nol */
+.saving-zero {
+    color: #6b7280 !important;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   NUMBER
+   ========================================================= */
+
+.productivity-number {
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   HORIZONTAL SCROLLBAR
+   ========================================================= */
+
+.productivity-table-wrapper::-webkit-scrollbar {
+    height: 9px;
+}
+
+
+.productivity-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+
+.productivity-table-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+
+    .productivity-table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }

@@ -1,0 +1,182 @@
+﻿/* =========================================================
+   USER MANAGEMENT
+   ========================================================= */
+
+/* Header halaman */
+.user-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.user-page-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.user-page-description {
+    margin: 6px 0 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+
+/* Tombol Tambah User */
+.btn-add-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+
+/* Card tabel */
+.user-management-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+
+/* Tabel */
+.user-table {
+    margin-bottom: 0;
+}
+
+    .user-table thead th {
+        background: #f8f9fa;
+        color: #495057;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .user-table tbody td {
+        padding: 14px 16px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .user-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .user-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+
+/* Badge Role */
+.role-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.role-admin {
+    background: #e9ecef;
+    color: #343a40;
+}
+
+.role-hr {
+    background: #e7f1ff;
+    color: #0d6efd;
+}
+
+.role-ci {
+    background: #e8f5e9;
+    color: #198754;
+}
+
+.role-production {
+    background: #fff3cd;
+    color: #997404;
+}
+
+
+/* Badge Status */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-active {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #842029;
+}
+
+
+/* Tombol aksi */
+.user-action-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+    .user-action-buttons .btn {
+        border-radius: 6px;
+        padding: 5px 11px;
+        font-size: 13px;
+    }
+
+
+/* User Admin tidak memiliki tombol aksi */
+.user-protected {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+
+/* Tampilan ketika belum ada user */
+.empty-users {
+    text-align: center;
+    padding: 45px 20px;
+    color: #6c757d;
+}
+
+.empty-users-icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .user-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-add-user {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .user-table {
+        min-width: 700px;
+    }
+}

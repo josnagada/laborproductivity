@@ -1,0 +1,518 @@
+﻿@model LaborProductivity.Models.WorkHoursViewModel
+
+@{
+    ViewData["Title"] = "HR - Work Hours";
+}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         JUDUL HALAMAN
+         ===================================================== -->
+
+    <div class="mb-4">
+        <h2>Work Hours</h2>
+        <p class="text-muted">
+            Input working hours berdasarkan Fiscal Calendar.
+        </p>
+    </div>
+
+
+    <!-- =====================================================
+         FORM WORK HOURS
+         ===================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h5 class="mb-0">Input Work Hours</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Create"
+                  asp-controller="WorkHours"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+
+                    <!-- =================================================
+                         DEPARTMENT
+                         Department hanya digunakan untuk memfilter
+                         Data Master.
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="DepartmentId" class="form-label">
+                            Department
+                        </label>
+
+                        <select id="DepartmentId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Department --
+                            </option>
+
+                            @foreach (var department in Model.Departments)
+                            {
+                                <option value="@department.DepartmentId">
+                                    @department.DepartmentName
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CC - PRODUCT GROUP
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="DataMasterId" class="form-label">
+                            CC - Product Group
+                        </label>
+
+                        <select id="DataMasterId"
+                                name="DataMasterId"
+                                class="form-select"
+                                disabled>
+
+                            <option value="">
+                                -- Select CC - Product Group --
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FISCAL YEAR
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="FiscalYear" class="form-label">
+                            Fiscal Year
+                        </label>
+
+                        <select id="FiscalYear"
+                                name="FiscalYear"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Fiscal Year --
+                            </option>
+
+                            @foreach (var year in Model.FiscalYears)
+                            {
+                                <option value="@year">
+                                    @year
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FISCAL WEEK
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="WeekNo" class="form-label">
+                            Fiscal Week
+                        </label>
+
+                        <select id="WeekNo"
+                                name="WeekNo"
+                                class="form-select"
+                                disabled>
+
+                            <option value="">
+                                -- Select Fiscal Week --
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         NORMAL HOURS
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="NormalHours" class="form-label">
+                            Normal Hours
+                        </label>
+
+                        <input type="number"
+                               id="NormalHours"
+                               name="NormalHours"
+                               class="form-control"
+                               step="0.01"
+                               min="0"
+                               placeholder="Enter normal hours" />
+
+                    </div>
+
+
+                    <!-- =================================================
+                         WORK HOURS
+                         ================================================= -->
+                    <div class="col-md-6 mb-3">
+
+                        <label for="WorkHoursValue" class="form-label">
+                            Work Hours
+                        </label>
+
+                        <input type="number"
+                               id="WorkHoursValue"
+                               name="WorkHoursValue"
+                               class="form-control"
+                               step="0.01"
+                               min="0"
+                               placeholder="Enter work hours" />
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     BUTTON
+                     ===================================================== -->
+                <div class="mt-3">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Save Work Hours
+
+                    </button>
+
+                    <button type="reset"
+                            class="btn btn-secondary">
+
+                        Reset
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     TABLE WORK HOURS
+     ===================================================== -->
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-header">
+        <h5 class="mb-0">
+            Work Hours Data
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        @if (Model.ExistingWorkHours.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Fiscal Year</th>
+                            <th>Week</th>
+                            <th>CC - Product Group</th>
+                            <th>Work Date</th>
+                            <th>Normal Hours</th>
+                            <th>Work Hours</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.ExistingWorkHours)
+                        {
+                            <tr>
+
+                                <td>
+                                    @item.FiscalYear
+                                </td>
+
+                                <td>
+                                    Week @item.WeekNo
+                                </td>
+
+                                <td>
+                                    @if (item.DataMaster != null)
+                                    {
+                                        @($"{item.DataMaster.CostCenter} - {item.DataMaster.ProductGroup}")
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.WorkDate.ToString("dd-MM-yyyy")
+                                </td>
+
+                                <td>
+                                    @item.NormalHours.ToString("N2")
+                                </td>
+
+                                <td>
+                                    @item.WorkHoursValue.ToString("N2")
+                                </td>
+
+                                <td>
+                                    <a asp-controller="WorkHours"
+                                       asp-action="Edit"
+                                       asp-route-id="@item.WorkHoursId"
+                                       class="btn btn-sm btn-warning">
+                                        Edit
+                                    </a>
+
+                                    <form asp-controller="WorkHours"
+                                          asp-action="Delete"
+                                          asp-route-id="@item.WorkHoursId"
+                                          method="post"
+                                          class="d-inline">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus data Work Hours ini?');">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0">
+                Belum ada data Work Hours.
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script>
+
+        // =========================================================
+        // Fungsi untuk mengambil Fiscal Week yang masih tersedia
+        // berdasarkan Fiscal Year dan Data Master yang dipilih.
+        // =========================================================
+        async function loadFiscalWeeks() {
+
+            const fiscalYear =
+                document.getElementById("FiscalYear").value;
+
+            const dataMasterId =
+                document.getElementById("DataMasterId").value;
+
+            const weekSelect =
+                document.getElementById("WeekNo");
+
+            // Reset Fiscal Week
+            weekSelect.innerHTML =
+                '<option value="">-- Select Fiscal Week --</option>';
+
+            // Fiscal Year dan Data Master harus dipilih terlebih dahulu
+            if (!fiscalYear || !dataMasterId) {
+
+                weekSelect.disabled = true;
+
+                return;
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/WorkHours/GetFiscalWeeks?fiscalYear=${fiscalYear}&dataMasterId=${dataMasterId}`
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Gagal mengambil fiscal week."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                // Masukkan Fiscal Week yang masih tersedia
+                data.forEach(function (item) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        item.weekNo;
+
+                    option.textContent =
+                        `Week ${item.weekNo}`;
+
+                    weekSelect.appendChild(option);
+                });
+
+                // Jika tidak ada week yang tersedia
+                if (data.length === 0) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value = "";
+
+                    option.textContent =
+                        "All weeks sudah diinput";
+
+                    weekSelect.appendChild(option);
+
+                    weekSelect.disabled = true;
+
+                } else {
+
+                    weekSelect.disabled = false;
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                weekSelect.disabled = true;
+            }
+        }
+
+
+        // =========================================================
+        // Department berubah
+        // =========================================================
+        document.getElementById("DepartmentId")
+            .addEventListener("change", async function () {
+
+                const departmentId =
+                    this.value;
+
+                const dataMasterSelect =
+                    document.getElementById("DataMasterId");
+
+                // Reset Data Master
+                dataMasterSelect.innerHTML =
+                    '<option value="">-- Select CC - Product Group --</option>';
+
+                // Reset Fiscal Week
+                document.getElementById("WeekNo").innerHTML =
+                    '<option value="">-- Select Fiscal Week --</option>';
+
+                document.getElementById("WeekNo").disabled =
+                    true;
+
+                if (!departmentId) {
+
+                    dataMasterSelect.disabled = true;
+
+                    return;
+                }
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/WorkHours/GetDataMasters?departmentId=${departmentId}`
+                        );
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Gagal mengambil data master."
+                        );
+                    }
+
+                    const data =
+                        await response.json();
+
+                    data.forEach(function (item) {
+
+                        const option =
+                            document.createElement("option");
+
+                        option.value =
+                            item.dataMasterId;
+
+                        option.textContent =
+                            `${item.costCenter} - ${item.productGroup}`;
+
+                        dataMasterSelect.appendChild(option);
+                    });
+
+                    dataMasterSelect.disabled =
+                        data.length === 0;
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    dataMasterSelect.disabled = true;
+                }
+            });
+
+
+        // =========================================================
+        // Data Master berubah
+        // =========================================================
+        document.getElementById("DataMasterId")
+            .addEventListener("change", function () {
+
+                // Ketika Data Master berubah,
+                // Fiscal Week harus dihitung ulang.
+                loadFiscalWeeks();
+            });
+
+
+        // =========================================================
+        // Fiscal Year berubah
+        // =========================================================
+        document.getElementById("FiscalYear")
+            .addEventListener("change", function () {
+
+                // Ketika Fiscal Year berubah,
+                // Fiscal Week harus dihitung ulang.
+                loadFiscalWeeks();
+            });
+
+    </script>
+}

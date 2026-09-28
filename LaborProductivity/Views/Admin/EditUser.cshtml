@@ -1,0 +1,322 @@
+﻿@model LaborProductivity.Models.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="container">
+    <h1>Edit User</h1>
+
+    <p>Ubah informasi user di bawah ini.</p>
+
+    <form asp-controller="Admin"
+          asp-action="EditUser"
+          method="post">
+
+        <input asp-for="Id" type="hidden" />
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">
+                Email
+            </label>
+
+            <input asp-for="Email"
+                   type="email"
+                   class="form-control" />
+
+            <span asp-validation-for="Email"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Role -->
+        <div class="mb-3">
+            <label asp-for="Role" class="form-label">
+                Role
+            </label>
+
+            <select asp-for="Role"
+                    id="roleSelect"
+                    class="form-select">
+
+                <option value="">-- Pilih Role --</option>
+                <option value="hr">Human Resource</option>
+                <option value="ci">Continuous Improvement</option>
+                <option value="production">Production</option>
+            </select>
+
+            <span asp-validation-for="Role"
+                  class="text-danger"></span>
+        </div>
+
+        <!-- Production Scope -->
+        <div id="productionScopeSection"
+             style="display: none;">
+
+            <!-- Department -->
+            <div class="mb-3">
+                <label asp-for="DepartmentId"
+                       class="form-label">
+                    Department
+                </label>
+
+                <select asp-for="DepartmentId"
+                        id="departmentSelect"
+                        class="form-select">
+
+                    <option value="">
+                        -- Pilih Department --
+                    </option>
+
+                    @foreach (var department in Model.Departments)
+                    {
+                        <option value="@department.DepartmentId">
+                            @department.DepartmentName
+                        </option>
+                    }
+
+                </select>
+
+                <span asp-validation-for="DepartmentId"
+                      class="text-danger"></span>
+            </div>
+
+            <!-- CC / Product Group -->
+            <div class="mb-3">
+                <label asp-for="CostCenter"
+                       class="form-label">
+                    CC / Product Group
+                </label>
+
+                <select asp-for="CostCenter"
+                        id="dataMasterSelect"
+                        class="form-select">
+
+                    <option value="">
+                        -- Pilih CC / Product Group --
+                    </option>
+
+                    @foreach (var dataMaster in Model.DataMasters
+                                        .GroupBy(dm => new
+                                        {
+                                            dm.CostCenter,
+                                            dm.ProductGroup,
+                                            dm.DepartmentId
+                                        })
+                                        .OrderBy(g => g.Key.CostCenter)
+                                        .ThenBy(g => g.Key.ProductGroup))
+                    {
+                        <option value="@dataMaster.Key.CostCenter"
+                                data-department-id="@dataMaster.Key.DepartmentId"
+                                data-product-group="@dataMaster.Key.ProductGroup"
+                                data-current="@(
+                                dataMaster.Key.CostCenter == Model.CostCenter &&
+                                dataMaster.Key.ProductGroup == Model.ProductGroup &&
+                                dataMaster.Key.DepartmentId == Model.DepartmentId
+                                ? "true"
+                                : "false"
+                                                                )">
+
+                        @dataMaster.Key.CostCenter -
+                        @dataMaster.Key.ProductGroup
+
+                        </option>
+                                        }
+
+                </select>
+
+                <span asp-validation-for="CostCenter"
+                      class="text-danger"></span>
+
+                <input asp-for="ProductGroup"
+                       type="hidden"
+                       id="productGroupHidden" />
+
+                <p class="text-muted mt-2">
+                    Akun ini hanya dapat menginput data Production
+                    untuk Product Line yang berada dalam
+                    CC/Product Group yang dipilih.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label asp-for="Status"
+                   class="form-label">
+                Status
+            </label>
+
+            <select asp-for="Status"
+                    class="form-select">
+
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+
+            <span asp-validation-for="Status"
+                  class="text-danger"></span>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Simpan Perubahan
+        </button>
+
+        <a asp-controller="Admin"
+           asp-action="Users"
+           class="btn btn-secondary">
+            Batal
+        </a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const roleSelect =
+            document.getElementById("roleSelect");
+
+        const productionScopeSection =
+            document.getElementById("productionScopeSection");
+
+        const departmentSelect =
+            document.getElementById("departmentSelect");
+
+        const dataMasterSelect =
+            document.getElementById("dataMasterSelect");
+
+        const productGroupHidden =
+            document.getElementById("productGroupHidden");
+
+        // Menampilkan atau menyembunyikan
+        // bagian Production Scope berdasarkan Role.
+        function updateProductionScopeVisibility() {
+            if (roleSelect.value === "production") {
+                productionScopeSection.style.display = "block";
+            } else {
+                productionScopeSection.style.display = "none";
+            }
+        }
+
+        // Memfilter pilihan CC / Product Group
+        // berdasarkan Department.
+        function updateCostCenterOptions(keepCurrentValue = false) {
+
+            const selectedDepartment =
+                departmentSelect.value;
+
+            const currentCostCenter =
+                dataMasterSelect.value;
+
+            const options =
+                dataMasterSelect.querySelectorAll("option");
+
+            options.forEach(function (option, index) {
+
+                if (index === 0) {
+                    option.hidden = false;
+                    return;
+                }
+
+                const optionDepartment =
+                    option.getAttribute("data-department-id");
+
+                if (
+                    selectedDepartment === "" ||
+                    optionDepartment === selectedDepartment
+                ) {
+                    option.hidden = false;
+                } else {
+                    option.hidden = true;
+                }
+            });
+
+            // Saat halaman pertama kali dibuka,
+            // pertahankan CC yang sudah tersimpan.
+            if (keepCurrentValue) {
+
+                const currentOption =
+                    Array.from(
+                        dataMasterSelect.options
+                    ).find(function (option) {
+
+                        return (
+                            option.getAttribute("data-department-id")
+                                === selectedDepartment &&
+                            option.getAttribute("data-current")
+                                === "true"
+                        );
+
+                    });
+
+                if (currentOption) {
+                    dataMasterSelect.value =
+                        currentOption.value;
+
+                    productGroupHidden.value =
+                        currentOption.getAttribute(
+                            "data-product-group"
+                        ) || "";
+
+                    return;
+                }
+            }
+
+            // Jika Department diganti,
+            // pilihan CC/Product Group dikosongkan.
+            if (!keepCurrentValue) {
+                dataMasterSelect.value = "";
+                productGroupHidden.value = "";
+            }
+        }
+
+        // Saat Department berubah,
+        // filter ulang CC/Product Group.
+        departmentSelect.addEventListener(
+            "change",
+            function () {
+                updateCostCenterOptions(false);
+            }
+        );
+
+        // Saat CC/Product Group berubah,
+        // simpan Product Group ke hidden input.
+        dataMasterSelect.addEventListener(
+            "change",
+            function () {
+
+                const selectedOption =
+                    dataMasterSelect.options[
+                        dataMasterSelect.selectedIndex
+                    ];
+
+                const productGroup =
+                    selectedOption.getAttribute(
+                        "data-product-group"
+                    );
+
+                productGroupHidden.value =
+                    productGroup || "";
+            }
+        );
+
+        // Saat Role berubah,
+        // tampilkan atau sembunyikan scope.
+        roleSelect.addEventListener(
+            "change",
+            updateProductionScopeVisibility
+        );
+
+        // Inisialisasi saat halaman pertama kali dibuka.
+        updateProductionScopeVisibility();
+
+        // Jika user adalah Production,
+        // tampilkan scope dan pertahankan
+        // Department + CC/Product Group yang tersimpan.
+        if (roleSelect.value === "production") {
+            updateCostCenterOptions(true);
+        }
+    </script>
+}

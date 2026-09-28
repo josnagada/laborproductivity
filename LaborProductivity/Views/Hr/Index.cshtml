@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["Title"] = "HR Dashboard";
+}
+
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+        .dashboard-hero h2 {
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .dashboard-hero p {
+            margin: 0;
+            opacity: 0.85;
+        }
+
+    .dashboard-date {
+        text-align: right;
+    }
+
+        .dashboard-date .date {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .dashboard-date .time {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .dashboard-date .day {
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 22px;
+        min-height: 140px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+        .stat-card .stat-title {
+            font-size: 14px;
+            color: #777;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .stat-card .stat-product {
+            font-size: 14px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+    .year-filter {
+        margin-bottom: 20px;
+    }
+
+        .year-filter label {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .year-filter select {
+            width: 140px;
+            display: inline-block;
+        }
+
+    /* Row berisi 2 stat card (Tertinggi & Terendah), sejajar */
+    .ot-stat-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card-wrapper {
+        min-width: 0;
+    }
+
+    /* Tabel jadi blok tersendiri, full width, di luar grid stat card */
+    .ot-table-card {
+        background: white;
+        border-radius: 10px;
+        padding: 22px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+    }
+
+    .ot-table-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .ot-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+        .ot-table th,
+        .ot-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ot-table th {
+            font-weight: 600;
+            background-color: #f8f9fa;
+            text-align: left;
+        }
+
+            .ot-table th:last-child,
+            .ot-table td:last-child {
+                width: 180px;
+                text-align: right;
+            }
+
+        .ot-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .ot-hours {
+        text-align: right;
+    }
+
+    .ot-total {
+        font-weight: 700;
+    }
+
+    @@media (max-width: 768px) {
+        .ot-stat-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+
+    <!-- Hero Dashboard -->
+    <div class="dashboard-hero">
+        <div class="row">
+            <div class="col-md-7">
+                <h2>Welcome Back, Human Resource Team!</h2>
+                <p>Human Resource Dashboard</p>
+            </div>
+            <div class="col-md-5">
+                <div class="dashboard-date">
+                    <div class="date" id="current-date">18 September 2026</div>
+                    <div class="time" id="current-time">00:00:00</div>
+                    <div class="day" id="current-day">Friday</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Summary -->
+    <div class="section-title">Data Summary</div>
+
+    <!-- Filter Tahun -->
+    <div class="year-filter">
+        <form method="get" asp-controller="Hr" asp-action="Index">
+            <label for="year">Tahun :</label>
+            <select id="year" name="year" class="form-select" onchange="this.form.submit()">
+                @foreach (var item in ViewBag.Years)
+                {
+                    <option value="@item" selected="@(item == ViewBag.SelectedYear)">
+                        @item
+                    </option>
+                }
+            </select>
+        </form>
+    </div>
+
+    <!-- Row: hanya berisi 2 stat card, sejajar -->
+    <div class="ot-stat-row">
+
+        <!-- OT Hours Tertinggi -->
+        <div class="stat-card-wrapper">
+            <div class="stat-card">
+                <div class="stat-title">OT HOURS TERTINGGI</div>
+
+                @if (ViewBag.HighestOt != null)
+                {
+                    <div class="stat-value">@ViewBag.HighestOt.OtHours.ToString("N2")</div>
+                    <div class="stat-product">@ViewBag.HighestOt.ProductGroup</div>
+                }
+                else
+                {
+                    <div class="stat-value">0.00</div>
+                    <div class="stat-product">Tidak ada data</div>
+                }
+            </div>
+        </div>
+
+        <!-- OT Hours Terendah -->
+        <div class="stat-card-wrapper">
+            <div class="stat-card">
+                <div class="stat-title">OT HOURS TERENDAH</div>
+
+                @if (ViewBag.LowestOt != null)
+                {
+                    <div class="stat-value">@ViewBag.LowestOt.OtHours.ToString("N2")</div>
+                    <div class="stat-product">@ViewBag.LowestOt.ProductGroup</div>
+                }
+                else
+                {
+                    <div class="stat-value">0.00</div>
+                    <div class="stat-product">Tidak ada data</div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Total OT Hours per Product Group: full width di bawah stat row -->
+    <div class="ot-table-card">
+        <div class="ot-table-title">Total OT Hours per Product Group</div>
+
+        <div class="table-responsive">
+            <table class="ot-table">
+                <thead>
+                    <tr>
+                        <th>Product Group</th>
+                        <th class="ot-hours">OT Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.OtByProductGroup != null && ViewBag.OtByProductGroup.Count > 0)
+                    {
+                        foreach (var item in ViewBag.OtByProductGroup)
+                        {
+                            <tr>
+                                <td>@item.ProductGroup</td>
+                                <td class="ot-hours">@item.OtHours.ToString("N2")</td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td class="ot-total">TOTAL OT HOURS</td>
+                            <td class="ot-hours ot-total">
+                                @{
+                                    decimal totalOtHours = 0;
+                                    foreach (var item in ViewBag.OtByProductGroup)
+                                    {
+                                        totalOtHours += (decimal)item.OtHours;
+                                    }
+                                }
+                                @totalOtHours.ToString("N2")
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" style="text-align:center;">Tidak ada data OT Hours.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+
+            const dateOptions = { day: '2-digit', month: 'long', year: 'numeric' };
+            const dateText = now.toLocaleDateString('id-ID', dateOptions);
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const dayOptions = { weekday: 'long' };
+            const dayText = now.toLocaleDateString('id-ID', dayOptions);
+
+            document.getElementById('current-date').textContent = dateText;
+            document.getElementById('current-time').textContent = hours + ':' + minutes + ':' + seconds;
+            document.getElementById('current-day').textContent = dayText;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+}

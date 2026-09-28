@@ -1,0 +1,410 @@
+﻿@model LaborProductivity.Models.ProductivityReportViewModel
+
+@{
+    ViewData["Title"] = "Labor Productivity Report";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/productivity.css"
+          asp-append-version="true" />
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h2>Labor Productivity Report</h2>
+        <p>Production Labor Productivity Report Dashboard</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h4>Report Filter</h4>
+
+            <form method="get" asp-controller="Productivity" asp-action="Index">
+
+                <div class="row">
+
+                    <!-- Report Type -->
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            Report Type
+                        </label>
+
+                        <select name="reportType" class="form-select">
+                            <option value="summary"
+                                    selected="@(Model.ReportType == "summary")">
+                                Summary
+                            </option>
+
+                            <option value="detail"
+                                    selected="@(Model.ReportType == "detail")">
+                                Detail
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            Department
+                        </label>
+
+                        <select name="departmentId"
+                                class="form-select">
+
+                            <option value="">
+                                All Departments
+                            </option>
+
+                            @foreach (var department in Model.Departments)
+                            {
+                                <option value="@department.DepartmentId"
+                                        selected="@(Model.DepartmentId == department.DepartmentId)">
+                                    @department.DepartmentName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Cost Center -->
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            CC - Product Group
+                        </label>
+
+                        <select name="costCenter"
+                                class="form-select">
+
+                            <option value="">
+                                All
+                            </option>
+
+                            @foreach (var dataMaster in Model.FilterDataMasters
+                                                        .GroupBy(d => d.CostCenter)
+                                                        .Select(g => g.First())
+                                                        .OrderBy(d => d.CostCenter))
+                            {
+                                <option value="@dataMaster.CostCenter"
+                                        selected="@(Model.CostCenter == dataMaster.CostCenter)">
+                                    @dataMaster.CostCenter
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <!-- Fiscal Year -->
+                    <div class="col-md-2">
+                        <label class="form-label">
+                            Fiscal Year
+                        </label>
+
+                        <select name="year"
+                                class="form-select">
+
+                            @foreach (var fiscalYear in Model.FiscalYears)
+                            {
+                                <option value="@fiscalYear"
+                                        selected="@(Model.SelectedYear == fiscalYear)">
+                                    @fiscalYear
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Fiscal Week -->
+                    <div class="col-md-1">
+                        <label class="form-label">
+                            Week
+                        </label>
+
+                        <select name="fiscalWeek"
+                                class="form-select">
+
+                            <option value="">
+                                All
+                            </option>
+
+                            @foreach (var week in Model.FiscalWeeks)
+                            {
+                                <option value="@week.WeekNo"
+                                        selected="@(Model.SelectedWeek == week.WeekNo)">
+                                    @week.WeekNo
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="mt-3 d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary">
+                        Show Data
+                    </button>
+
+                    @if (Model.HasFiltered)
+                    {
+                        <div class="dropdown">
+
+                            <button class="btn btn-success dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                ⬇ &nbsp; Download
+                            </button>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a asp-controller="Productivity"
+                                       asp-action="Export"
+                                       asp-route-reportType="@Model.ReportType"
+                                       asp-route-departmentId="@Model.DepartmentId"
+                                       asp-route-costCenter="@Model.CostCenter"
+                                       asp-route-year="@Model.SelectedYear"
+                                       asp-route-fiscalWeek="@Model.SelectedWeek"
+                                       class="dropdown-item">
+
+                                        📊 Excel (.xlsx)
+
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    }
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    @if (Model.HasFiltered)
+    {
+        <div class="card mt-4">
+            <div class="card-body">
+
+                <h4 class="mb-3">Labor Productivity Report</h4>
+
+                @if (Model.Rows.Any())
+                {
+                    @if (Model.ReportType == "summary")
+                    {
+                        <!-- =========================
+                             SUMMARY REPORT
+                             Hanya menampilkan:
+                             Baseline, Actual (HR/PC), Saving
+                             ========================= -->
+
+                        <div class="productivity-table-wrapper">
+                            <table class="productivity-table">
+
+                                <thead>
+                                    <tr>
+                                        <th class="sticky-col">
+                                            CC - Product Line
+                                        </th>
+
+                                        @foreach (var weekNo in Model.Periods)
+                                        {
+                                            <th colspan="3" class="text-center">
+                                                Week @weekNo
+                                            </th>
+                                        }
+
+                                        <th colspan="3" class="text-center">
+                                            Total
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="sticky-col"></th>
+
+                                        @foreach (var weekNo in Model.Periods)
+                                        {
+                                            <th>Baseline (Hr/Pc)</th>
+                                            <th>Actual (Hr/Pc)</th>
+                                            <th>Saving (Labor Productivity)</th>
+                                        }
+
+                                        <th>Baseline (Hr/Pc)</th>
+                                        <th>Actual (Hr/Pc)</th>
+                                        <th>Saving (Labor Productivity)</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var row in Model.Rows)
+                                    {
+                                        <tr>
+                                            <td>@row.Label</td>
+
+                                            @foreach (var weekNo in Model.Periods)
+                                            {
+                                                var period = row.Periods[weekNo];
+
+                                                <td>
+                                                    @(period.Baseline?.ToString("N5") ?? "-")
+                                                </td>
+
+                                                <td>
+                                                    @(period.Aktual?.ToString("N5") ?? "-")
+                                                </td>
+
+                                                <td>
+                                                    @(period.Saving?.ToString("N5") ?? "-")
+                                                </td>
+                                            }
+
+                                            <td>
+                                                @(row.Total.Baseline?.ToString("N5") ?? "-")
+                                            </td>
+
+                                            <td>
+                                                @(row.Total.Aktual?.ToString("N5") ?? "-")
+                                            </td>
+
+                                            <td>
+                                                @(row.Total.Saving?.ToString("N5") ?? "-")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- =========================
+                             DETAIL REPORT
+                             ========================= -->
+
+                        <div class="productivity-table-wrapper">
+                            <table class="productivity-table">
+
+                                <thead>
+                                    <tr>
+                                        <th class="sticky-col">
+                                            CC - Product Line
+                                        </th>
+
+                                        @foreach (var weekNo in Model.Periods)
+                                        {
+                                            <th colspan="8" class="text-center">
+                                                Week @weekNo
+                                            </th>
+                                        }
+
+                                        <th colspan="8" class="text-center">
+                                            Total
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="sticky-col"></th>
+
+                                        @foreach (var weekNo in Model.Periods)
+                                        {
+                                            <th>Normal Hours</th>
+                                            <th>Work Hours</th>
+                                            <th>OT</th>
+                                            <th>Qty Loading</th>
+                                            <th>Qty Out Final</th>
+                                            <th>Baseline (Hr/Pc)</th>
+                                            <th>Actual (Hr/Pc)</th>
+                                            <th>Saving (Labor Productivity)</th>
+                                        }
+
+                                        <th>Normal Hours</th>
+                                        <th>Work Hours</th>
+                                        <th>OT</th>
+                                        <th>Qty Loading</th>
+                                        <th>Qty Out Final</th>
+                                        <th>Baseline (Hr/Pc)</th>
+                                        <th>Actual (Hr/Pc)</th>
+                                        <th>Saving (Labor Productivity)</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var row in Model.Rows)
+                                    {
+                                        <tr>
+                                            <td>@row.Label</td>
+
+                                            @foreach (var weekNo in Model.Periods)
+                                            {
+                                                var period = row.Periods[weekNo];
+
+                                                <td>@period.NormalHours.ToString("N2")</td>
+                                                <td>@period.WorkHours.ToString("N2")</td>
+                                                <td>@period.OtHours.ToString("N2")</td>
+                                                <td>@period.QtyLoading.ToString("N2")</td>
+                                                <td>@period.QtyOutFinal.ToString("N2")</td>
+
+                                                <td>
+                                                    @(period.Baseline?.ToString("N5") ?? "-")
+                                                </td>
+
+                                                <td>
+                                                    @(period.Aktual?.ToString("N5") ?? "-")
+                                                </td>
+
+                                                <td class="productivity-number @(period.Saving.HasValue
+                                                                        ? period.Saving.Value > 0
+                                                                            ? "saving-positive"
+                                                                            : period.Saving.Value < 0
+                                                                                ? "saving-negative"
+                                                                                : "saving-zero"
+                                                        : "")">
+                                @(period.Saving?.ToString("N5") ?? "-")
+                            </td>
+                                                        }
+
+                                            <!-- Total -->
+                                            <td>@row.Total.NormalHours.ToString("N2")</td>
+                                            <td>@row.Total.WorkHours.ToString("N2")</td>
+                                            <td>@row.Total.OtHours.ToString("N2")</td>
+                                            <td>@row.Total.QtyLoading.ToString("N2")</td>
+                                            <td>@row.Total.QtyOutFinal.ToString("N2")</td>
+
+                                            <td>
+                                                @(row.Total.Baseline?.ToString("N5") ?? "-")
+                                            </td>
+
+                                            <td>
+                                                @(row.Total.Aktual?.ToString("N5") ?? "-")
+                                            </td>
+
+                                            <td class="productivity-number @(row.Total.Saving.HasValue
+                                                                ? row.Total.Saving.Value > 0
+                                                                    ? "saving-positive"
+                                                                    : row.Total.Saving.Value < 0
+                                                                        ? "saving-negative"
+                                                                        : "saving-zero"
+                                                    : "")">
+                                @(row.Total.Saving?.ToString("N5") ?? "-")
+                            </td>
+                        </tr>
+                                                }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        Tidak ada data untuk filter yang dipilih.
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+
+</div>

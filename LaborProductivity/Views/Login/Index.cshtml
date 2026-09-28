@@ -1,0 +1,261 @@
+﻿@{
+    Layout = null;
+}
+
+@model LaborProductivity.Models.LoginViewModel
+
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Login - Labor Productivity</title>
+    <link rel="icon"
+          href="~/upload/favicon.ico"
+          type="image/x-icon" />
+
+    <!-- CSS khusus halaman Login -->
+    <link rel="stylesheet"
+          href="~/css/login.css" />
+
+    <!-- Font Awesome untuk icon -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+</head>
+
+<body class="login-page">
+
+    <div class="login-box">
+
+        <div class="login-box-body">
+
+            <!-- Bagian Welcome -->
+            <div class="login-box-msg">
+
+                <div>
+
+                    <!--
+                        Untuk sementara menggunakan icon sederhana.
+                        Nanti bisa kita hubungkan ke login_icon
+                        dari database jika memang tabel settings
+                        sudah kita migrasikan.
+                    -->
+                    <div class="login-icon">
+
+                        @if (ViewBag.Setting != null &&
+                                                !string.IsNullOrEmpty(ViewBag.Setting.LoginIcon))
+                        {
+                            <img src="~/uploads/settings/@ViewBag.Setting.LoginIcon"
+                                 alt="Login Icon"
+                                 style="max-width: 120px; max-height: 120px;" />
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-chart-line fa-4x"></i>
+                        }
+
+                    </div>
+
+                    <div class="login-logo">
+                        Welcome Back!
+                    </div>
+
+                </div>
+
+                <div>
+                    Please select your role to login.
+                </div>
+
+            </div>
+
+
+            <!-- Pesan Error -->
+            <div asp-validation-summary="ModelOnly"
+                 class="login-error">
+            </div>
+
+
+            <!-- Form Login -->
+            <form asp-controller="Login"
+                  asp-action="Index"
+                  method="post">
+
+                <!-- Role -->
+                <div class="form-group">
+
+                    <label asp-for="Role">
+                        Select Role
+                    </label>
+
+                    <select asp-for="Role"
+                            class="role-select">
+
+                        <option value="">
+                            -- Select Role --
+                        </option>
+
+                        <option value="admin">
+                            Administrator
+                        </option>
+
+                        <option value="ci">
+                            Continuous Improvement
+                        </option>
+
+                        <option value="hr">
+                            Human Resource
+                        </option>
+
+                        <option value="production">
+                            Production
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="Role"
+                          class="field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- Email -->
+                <div class="form-group">
+
+                    <div class="input-icon">
+
+                        <i class="fa-solid fa-user input-icon-left"></i>
+
+                        <input asp-for="Email"
+                               type="email"
+                               placeholder="Email address" />
+
+                    </div>
+
+                    <span asp-validation-for="Email"
+                          class="field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- Password -->
+                <div class="form-group">
+
+                    <div class="input-icon">
+
+                        <i class="fa-solid fa-lock input-icon-left"></i>
+
+                        <input asp-for="Password"
+                               type="password"
+                               id="password"
+                               placeholder="Password" />
+
+                        <i class="fa-solid fa-eye toggle-password"
+                           id="togglePassword">
+                        </i>
+
+                    </div>
+
+                    <span asp-validation-for="Password"
+                          class="field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- Remember Me -->
+                <div class="remember-me">
+
+                    <label>
+
+                        <input asp-for="RememberMe"
+                               type="checkbox" />
+
+                        Remember Me
+
+                    </label>
+
+                </div>
+
+
+                <!-- Tombol Login -->
+                <div>
+
+                    <button type="submit"
+                            class="login-button">
+
+                        Log In
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Mengatur tombol tampil/sembunyikan password
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const togglePassword =
+                    document.getElementById("togglePassword");
+
+                const password =
+                    document.getElementById("password");
+
+
+                togglePassword.addEventListener(
+                    "click",
+                    function () {
+
+                        if (password.type === "password") {
+
+                            password.type = "text";
+
+                            this.classList.remove(
+                                "fa-eye"
+                            );
+
+                            this.classList.add(
+                                "fa-eye-slash"
+                            );
+
+                        }
+                        else {
+
+                            password.type = "password";
+
+                            this.classList.remove(
+                                "fa-eye-slash"
+                            );
+
+                            this.classList.add(
+                                "fa-eye"
+                            );
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

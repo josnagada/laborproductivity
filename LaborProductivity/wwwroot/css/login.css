@@ -1,0 +1,333 @@
+﻿/* =========================================
+   LOGIN PAGE
+   ========================================= */
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+    body.login-page {
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #f4f7fa 0%, #e8eef4 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+
+/* =========================================
+   LOGIN CONTAINER
+   ========================================= */
+
+.login-box {
+    width: 100%;
+    max-width: 430px;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: loginFadeIn 0.6s ease-out;
+}
+
+
+/* =========================================
+   LOGIN CARD
+   ========================================= */
+
+.login-box-body {
+    background: #ffffff;
+    border: 1px solid #e5eaf0;
+    border-radius: 16px;
+    padding: 38px;
+    box-shadow: 0 15px 35px rgba(31, 58, 86, 0.10), 0 4px 12px rgba(31, 58, 86, 0.05);
+}
+
+
+/* =========================================
+   LOGIN ICON
+   ========================================= */
+
+.login-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    animation: iconAppear 0.7s ease-out;
+}
+
+    .login-icon img {
+        max-width: 82px;
+        max-height: 82px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+
+/* =========================================
+   WELCOME TITLE
+   ========================================= */
+
+.login-logo {
+    font-size: 25px;
+    font-weight: 700;
+    color: #1f3a56;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.login-box-msg {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   FORM
+   ========================================= */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+
+/* =========================================
+   INPUT
+   ========================================= */
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon-left {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.input-icon input {
+    width: 100%;
+    padding: 11px 40px 11px 38px;
+    box-sizing: border-box;
+    border: 1px solid #d8e0e8;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .input-icon input::placeholder {
+        color: #a0a9b5;
+    }
+
+    .input-icon input:focus {
+        border-color: #5d7fa3;
+        box-shadow: 0 0 0 3px rgba(93, 127, 163, 0.12);
+    }
+
+.input-icon:focus-within .input-icon-left {
+    color: #1f3a56;
+}
+
+
+/* =========================================
+   ROLE SELECT
+   ========================================= */
+
+.role-select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d8e0e8;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .role-select:focus {
+        border-color: #5d7fa3;
+        box-shadow: 0 0 0 3px rgba(93, 127, 163, 0.12);
+    }
+
+
+/* =========================================
+   PASSWORD TOGGLE
+   ========================================= */
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #94a3b8;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+    .toggle-password:hover {
+        color: #1f3a56;
+    }
+
+
+/* =========================================
+   REMEMBER ME
+   ========================================= */
+
+.remember-me {
+    margin: 4px 0 20px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+    .remember-me label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        cursor: pointer;
+    }
+
+    .remember-me input {
+        accent-color: #1f3a56;
+    }
+
+
+/* =========================================
+   LOGIN BUTTON
+   ========================================= */
+
+.login-button {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    background: #1f3a56;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .login-button:hover {
+        background: #294d70;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 12px rgba(31, 58, 86, 0.18);
+    }
+
+    .login-button:active {
+        transform: translateY(0);
+    }
+
+
+/* =========================================
+   ERROR
+   ========================================= */
+
+.login-error {
+    background: #fff4f4;
+    border: 1px solid #f2caca;
+    color: #b42318;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 13px;
+}
+
+
+/* =========================================
+   VALIDATION ERROR
+   ========================================= */
+
+.field-error {
+    display: block;
+    color: #b42318;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes loginFadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes iconAppear {
+
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 500px) {
+
+    body.login-page {
+        align-items: flex-start;
+        padding-top: 30px;
+        overflow: auto;
+    }
+
+    .login-box {
+        padding: 15px;
+    }
+
+    .login-box-body {
+        padding: 28px 22px;
+        border-radius: 14px;
+    }
+
+    .login-logo {
+        font-size: 22px;
+    }
+}

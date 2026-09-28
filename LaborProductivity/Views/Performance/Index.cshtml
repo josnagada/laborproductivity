@@ -1,0 +1,807 @@
+﻿@model LaborProductivity.Models.PerformanceViewModel
+
+@{
+    ViewData["Title"] = "Performance";
+
+    // Menentukan apakah user adalah Production.
+    bool isProduction = Model.CurrentRole == "production";
+}
+
+<div class="container-fluid">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Performance</h2>
+            <p class="text-muted mb-0">
+                Working Hours dan Labor Productivity Trend
+            </p>
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Performance Filter</strong>
+        </div>
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Performance"
+                  asp-action="Index">
+
+                <div class="row g-3">
+
+                    <!-- =================================================
+                         DEPARTMENT
+                         ================================================= -->
+                    @if (!isProduction)
+                    {
+                        <div class="col-md-3">
+
+                            <label for="departmentId"
+                                   class="form-label">
+                                Department
+                            </label>
+
+                            <select id="departmentId"
+                                    name="departmentId"
+                                    class="form-select">
+
+                                <option value="">
+                                    All Departments
+                                </option>
+
+                                @foreach (var department in Model.Departments)
+                                {
+                                    <option value="@department.DepartmentId"
+                                            selected="@(Model.DepartmentId == department.DepartmentId.ToString())">
+
+                                        @department.DepartmentName
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- =============================================
+                             PRODUCTION
+                             ============================================= -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cost Center - Product Line
+                            </label>
+
+                            @{
+                                var myDataMaster = Model.DataMasterList
+                                .FirstOrDefault();
+                            }
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@(myDataMaster != null
+                                                                                                                      ? $"{myDataMaster.CostCenter} - {myDataMaster.ProductLine}"
+                                                                                                                      : "Data tidak ditemukan")"
+                               readonly />
+
+                        </div>
+                                        }
+
+
+                    <!-- =================================================
+                         PRODUCT GROUP
+                         ================================================= -->
+                    @if (!isProduction)
+                    {
+                        <div class="col-md-3">
+
+                            <label for="productGroup"
+                                   class="form-label">
+                                Product Group
+                            </label>
+
+                            <select id="productGroup"
+                                    name="productGroup"
+                                    class="form-select">
+
+                                <option value="">
+                                    All Product Groups
+                                </option>
+
+                                @foreach (var group in Model.DataMasterList
+                                                            .GroupBy(x => new
+                                                            {
+                                                                x.DepartmentId,
+                                                                x.ProductGroup
+                                                            })
+                                                            .Select(x => x.First())
+                                                            .OrderBy(x => x.ProductGroup))
+                                {
+                                    <option value="@group.ProductGroup"
+                                            data-department="@group.DepartmentId"
+                                            selected="@(Model.ProductGroup == group.ProductGroup)">
+
+                                        @group.ProductGroup
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+                    }
+
+
+                    <!-- =================================================
+                         PRODUCT LINE
+                         ================================================= -->
+                    @if (!isProduction)
+                    {
+                        <div class="col-md-3">
+
+                            <label for="productLine"
+                                   class="form-label">
+                                Product Line
+                            </label>
+
+                            <select id="productLine"
+                                    name="productLine"
+                                    class="form-select">
+
+                                <option value="">
+                                    All Product Lines
+                                </option>
+
+                                @foreach (var dataMaster in Model.DataMasterList)
+                                {
+                                    <option value="@dataMaster.DataMasterId"
+                                            data-department="@dataMaster.DepartmentId"
+                                            data-product-group="@dataMaster.ProductGroup"
+                                            selected="@(Model.ProductLineId == dataMaster.DataMasterId)">
+
+                                        @dataMaster.CostCenter -
+                                        @dataMaster.ProductLine
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+                    }
+
+
+                    <!-- =================================================
+                         FISCAL YEAR
+                         ================================================= -->
+
+                    <div class="col-md-3">
+
+                        <label for="year"
+                               class="form-label">
+                            Fiscal Year
+                        </label>
+
+                        <select id="year"
+                                name="year"
+                                class="form-select">
+
+                            @foreach (var fiscalYear in Model.FiscalYears)
+                            {
+                                <option value="@fiscalYear"
+                                        selected="@(Model.SelectedYear == fiscalYear)">
+
+                                    @fiscalYear
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MONTH
+                         ================================================= -->
+
+                    <div class="col-md-3">
+
+                        <label for="month"
+                               class="form-label">
+                            Month
+                        </label>
+
+                        <select id="month"
+                                name="month"
+                                class="form-select">
+
+                            <option value="">
+                                All Months
+                            </option>
+
+                            @foreach (var month in Model.MonthNames)
+                            {
+                                <option value="@month.Key"
+                                        selected="@(Model.SelectedMonth == month.Key)">
+
+                                    @month.Value
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FISCAL WEEK
+                         ================================================= -->
+
+                    <div class="col-md-3">
+
+                        <label for="fiscalWeek"
+                               class="form-label">
+                            Fiscal Week
+                        </label>
+
+                        <select id="fiscalWeek"
+                                name="fiscalWeek"
+                                class="form-select">
+
+                            <option value="">
+                                All Weeks
+                            </option>
+
+                            @foreach (var fiscal in Model.FiscalCalendar
+                                                        .Where(x => x.FiscalYear == Model.SelectedYear))
+                            {
+                                <option value="@fiscal.WeekNo"
+                                        selected="@(Model.SelectedFiscalWeek == fiscal.WeekNo)">
+
+                                    WK @fiscal.WeekNo
+                                    (@fiscal.StartDate.ToString("dd MMM") -
+                                    @fiscal.EndDate.ToString("dd MMM"))
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SHOW DATA
+                         ================================================= -->
+
+                    <div class="col-md-3 d-flex align-items-end">
+
+                        <button type="submit"
+                                name="show"
+                                value="1"
+                                class="btn btn-primary w-100">
+
+                            Show Data
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         NOTICE / INFORMATION
+         ========================================================= -->
+    @if (!string.IsNullOrWhiteSpace(Model.DataMissingNotice))
+    {
+        <div class="alert alert-info mb-4">
+            @Model.DataMissingNotice
+        </div>
+    }
+
+
+    <!-- =========================================================
+         SCOPE
+         ========================================================= -->
+    @if (Model.HasFiltered &&
+        Model.ChartLabels.Any())
+    {
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <strong>Scope:</strong>
+                        @Model.ScopeLabel
+                    </div>
+
+                    @if (Model.IsAggregate)
+                    {
+                        <span class="badge bg-warning text-dark">
+                            @Model.FinalDataMasterCount Product Lines
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================================================
+         CHART AREA
+         ========================================================= -->
+    @if (Model.HasFiltered &&
+        Model.ChartLabels.Any())
+    {
+        <div class="row g-4">
+
+            <!-- =====================================================
+                 WORKING HOURS TREND
+                 ===================================================== -->
+
+            <div class="col-12">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header">
+                        <strong>Working Hours Trend</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div style="height: 400px;">
+                            <canvas id="chartHours"></canvas>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 LABOR PRODUCTIVITY TREND
+                 ===================================================== -->
+
+            <div class="col-12">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header">
+                        <strong>Labor Productivity Trend</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div style="height: 400px;">
+                            <canvas id="chartProductivity"></canvas>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+    else if (Model.HasFiltered &&
+    !Model.ChartLabels.Any() &&
+    string.IsNullOrWhiteSpace(Model.DataMissingNotice))
+    {
+        <div class="alert alert-warning">
+            Tidak ada data Performance untuk filter yang dipilih.
+        </div>
+    }
+
+</div>
+
+
+<!-- =============================================================
+     CHART.JS + FILTER CASCADING (GABUNGAN)
+     ============================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // ==========================================================
+        // DATA DARI PERFORMANCE VIEW MODEL
+        // ==========================================================
+
+        const chartLabels =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels));
+
+        const chartNormalHours =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartNormalHours));
+
+        const chartOtHours =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartOtHours));
+
+        const chartQtyOut =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartQtyOut));
+
+        const chartBaseline =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartBaseline));
+
+        const chartAktual =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartAktual));
+
+        const chartSaving =
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartSaving));
+
+
+        // ==========================================================
+        // WORKING HOURS TREND
+        // ==========================================================
+
+        const hoursCanvas =
+            document.getElementById("chartHours");
+
+        if (hoursCanvas && chartLabels.length > 0) {
+
+            new Chart(hoursCanvas, {
+
+                data: {
+
+                    labels: chartLabels,
+
+                    datasets: [
+
+                        {
+                            type: "bar",
+                            label: "Normal Hours",
+                            data: chartNormalHours,
+                            stack: "workingHours",
+                            yAxisID: "y",
+                            borderWidth: 1
+                        },
+
+                        {
+                            type: "bar",
+                            label: "OT Hours",
+                            data: chartOtHours,
+                            stack: "workingHours",
+                            yAxisID: "y",
+                            borderWidth: 1
+                        },
+
+                        {
+                            type: "line",
+                            label: "Qty Out",
+                            data: chartQtyOut,
+                            yAxisID: "y1",
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+
+                    plugins: {
+                        legend: { position: "top" },
+                        tooltip: { mode: "index", intersect: false }
+                    },
+
+                    scales: {
+
+                        x: {
+                            stacked: true,
+                            title: { display: true, text: "Fiscal Week" }
+                        },
+
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: { display: true, text: "Working Hours" }
+                        },
+
+                        y1: {
+                            beginAtZero: true,
+                            position: "right",
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: "Qty Out" }
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        // ==========================================================
+        // LABOR PRODUCTIVITY TREND
+        // ==========================================================
+
+        const productivityCanvas =
+            document.getElementById("chartProductivity");
+
+        if (productivityCanvas && chartLabels.length > 0) {
+
+            new Chart(productivityCanvas, {
+
+                data: {
+
+                    labels: chartLabels,
+
+                    datasets: [
+
+                        {
+                            type: "bar",
+                            label: "Saving (Hr/Pc)",
+                            data: chartSaving,
+                            yAxisID: "y",
+                            borderWidth: 1
+                        },
+
+                        {
+                            type: "line",
+                            label: "Baseline (Hr/Pc)",
+                            data: chartBaseline,
+                            yAxisID: "y",
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2
+                        },
+
+                        {
+                            type: "line",
+                            label: "Aktual (Hr/Pc)",
+                            data: chartAktual,
+                            yAxisID: "y",
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+
+                    plugins: {
+                        legend: { position: "top" },
+                        tooltip: { mode: "index", intersect: false }
+                    },
+
+                    scales: {
+
+                        x: {
+                            title: { display: true, text: "Fiscal Week" }
+                        },
+
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: "Hours / Piece" }
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        // ==========================================================
+        // PERFORMANCE FILTER CASCADING
+        // ==========================================================
+
+        const departmentSelect =
+            document.getElementById("departmentId");
+
+        const productGroupSelect =
+            document.getElementById("productGroup");
+
+        const productLineSelect =
+            document.getElementById("productLine");
+
+
+        // Untuk Production, dropdown ini memang tidak tersedia.
+        if (!departmentSelect ||
+            !productGroupSelect ||
+            !productLineSelect) {
+
+            return;
+
+        }
+
+
+       const allProductGroups =
+    Array.from(productGroupSelect.options)
+        .filter(option => option.value !== "")
+        .map(option => {
+
+                    return {
+                        value: option.value,
+                        text: option.text.trim(),
+                        department: option.dataset.department || ""
+                    };
+
+                });
+
+
+        const allProductLines =
+    Array.from(productLineSelect.options)
+        .filter(option => option.value !== "")
+        .map(option => {
+
+                    return {
+                        value: option.value,
+                        text: option.text.trim(),
+                        department: option.dataset.department || "",
+                        productGroup: option.dataset.productGroup || ""
+                    };
+
+                });
+
+
+        function updateProductGroups() {
+
+            const selectedDepartment = departmentSelect.value;
+            const selectedProductGroup = productGroupSelect.value;
+
+            productGroupSelect.innerHTML = "";
+
+            const allOption = document.createElement("option");
+            allOption.value = "";
+            allOption.textContent = "All Product Groups";
+            productGroupSelect.appendChild(allOption);
+
+            allProductGroups
+                .filter(item => {
+                    return selectedDepartment === "" ||
+                           item.department === selectedDepartment;
+                })
+                .forEach(item => {
+
+                    const option = document.createElement("option");
+                    option.value = item.value;
+                    option.textContent = item.text;
+                    option.dataset.department = item.department;
+
+                    if (item.value === selectedProductGroup) {
+                        option.selected = true;
+                    }
+
+                    productGroupSelect.appendChild(option);
+
+                });
+
+            const selectedExists =
+                Array.from(productGroupSelect.options)
+                    .some(option => option.value === selectedProductGroup);
+
+            if (!selectedExists) {
+                productGroupSelect.value = "";
+            }
+
+        }
+
+
+        function updateProductLines() {
+
+            const selectedDepartment = departmentSelect.value;
+            const selectedProductGroup = productGroupSelect.value;
+            const selectedProductLine = productLineSelect.value;
+
+            productLineSelect.innerHTML = "";
+
+            const allOption = document.createElement("option");
+            allOption.value = "";
+            allOption.textContent = "All Product Lines";
+            productLineSelect.appendChild(allOption);
+
+            allProductLines
+                .filter(item => {
+
+                    const departmentMatch =
+                        selectedDepartment === "" ||
+                        item.department === selectedDepartment;
+
+                    const productGroupMatch =
+                        selectedProductGroup === "" ||
+                        item.productGroup === selectedProductGroup;
+
+                    return departmentMatch && productGroupMatch;
+
+                })
+                .forEach(item => {
+
+                    const option = document.createElement("option");
+                    option.value = item.value;
+                    option.textContent = item.text;
+                    option.dataset.department = item.department;
+                    option.dataset.productGroup = item.productGroup;
+
+                    if (item.value === selectedProductLine) {
+                        option.selected = true;
+                    }
+
+                    productLineSelect.appendChild(option);
+
+                });
+
+            const selectedExists =
+                Array.from(productLineSelect.options)
+                    .some(option => option.value === selectedProductLine);
+
+            if (!selectedExists) {
+                productLineSelect.value = "";
+            }
+
+        }
+
+
+        departmentSelect.addEventListener("change", function () {
+            updateProductGroups();
+            updateProductLines();
+        });
+
+        productGroupSelect.addEventListener("change", function () {
+            updateProductLines();
+        });
+
+
+        updateProductGroups();
+        updateProductLines();
+
+    });
+
+</script>

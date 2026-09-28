@@ -1,0 +1,407 @@
+﻿@model LaborProductivity.Models.WorkHoursReportViewModel
+
+@{
+    ViewData["Title"] = "Work Hours Report";
+}
+
+<div class="container-fluid">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Work Hours Report</h2>
+    </div>
+
+
+    <!-- =========================================================
+         FILTER
+         ========================================================= -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form asp-controller="WorkHoursReport"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="row">
+
+                    <!-- Department -->
+                    <div class="col-md-3 mb-3">
+
+                        <label asp-for="SelectedDepartmentId"
+                               class="form-label">
+                            Department
+                        </label>
+
+                        <select asp-for="SelectedDepartmentId"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                All Departments
+                            </option>
+
+                            @foreach (var department in Model.Departments)
+                            {
+                                <option value="@department.DepartmentId">
+                                    @department.DepartmentName
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CC - Product Group -->
+                    <div class="col-md-3 mb-3">
+
+                        <label asp-for="SelectedCostCenter"
+                               class="form-label">
+                            CC - Product Group
+                        </label>
+
+                        <select asp-for="SelectedCostCenter"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                All CC - Product Group
+                            </option>
+
+                            @foreach (var item in Model.CostCenters)
+                            {
+                                <option value="@item.CostCenter">
+                                    @item.DisplayText
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Fiscal Year -->
+                    <div class="col-md-3 mb-3">
+
+                        <label asp-for="SelectedFiscalYear"
+                               class="form-label">
+                            Fiscal Year
+                        </label>
+
+                        <select asp-for="SelectedFiscalYear"
+                                class="form-select"
+                                onchange="submitFiscalYear(this)">
+
+                            @foreach (var year in Model.FiscalYears)
+                            {
+                                <option value="@year">
+                                    @year
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Fiscal Week -->
+                    <div class="col-md-3 mb-3">
+
+                        <label asp-for="SelectedFiscalWeek"
+                               class="form-label">
+                            Fiscal Week
+                        </label>
+
+                        <select asp-for="SelectedFiscalWeek"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                All Weeks
+                            </option>
+
+                            @foreach (var week in Model.FiscalWeeks)
+                            {
+                                <option value="@week.WeekNo">
+                                    @week.DisplayText
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         REPORT TABLE
+         ========================================================= -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <!-- Header Week -->
+                        <tr>
+
+                            <th rowspan="2"
+                                class="text-center align-middle">
+                                CC - Product Group
+                            </th>
+
+                            <th rowspan="2"
+                                class="text-center align-middle">
+                                Product Line
+                            </th>
+
+                            @foreach (var week in Model.ReportWeeks)
+                            {
+                                <th colspan="2"
+                                    class="text-center">
+                                    Week @week
+                                </th>
+                            }
+
+                            <th colspan="2"
+                                class="text-center">
+                                Total
+                            </th>
+
+                        </tr>
+
+
+                        <!-- Header Normal / Work Hours -->
+                        <tr>
+
+                            @foreach (var week in Model.ReportWeeks)
+                            {
+                                <th class="text-center">
+                                    Normal Hrs
+                                </th>
+
+                                <th class="text-center">
+                                    Work Hrs
+                                </th>
+                            }
+
+                            <th class="text-center">
+                                Normal Hrs
+                            </th>
+
+                            <th class="text-center">
+                                Work Hrs
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model.ReportRows.Any())
+                        {
+                            foreach (var row in Model.ReportRows)
+                            {
+                                <!-- =====================================
+                                     BARIS COST CENTER
+                                     ===================================== -->
+                                <tr class="table-secondary fw-bold">
+
+                                    <td>
+                                        @row.CostCenter - @row.ProductGroup
+                                    </td>
+
+                                    <td>
+                                        @if (row.ProductLines.Count == 1)
+                                        {
+                                            @row.ProductLines.First().ProductLine
+                                        }
+                                    </td>
+
+
+                                    @foreach (var week in Model.ReportWeeks)
+                                    {
+                                        var hours =
+                                        row.WeeklyHours.ContainsKey(week)
+                                        ? row.WeeklyHours[week]
+                                        : new LaborProductivity.Models.WorkHoursReportHours();
+
+                                        <td class="text-end">
+                                            @hours.NormalHours.ToString("N2")
+                                        </td>
+
+                                        <td class="text-end">
+                                            @hours.WorkHours.ToString("N2")
+                                        </td>
+                                    }
+
+
+                                    <td class="text-end">
+                                        @row.Total.NormalHours.ToString("N2")
+                                    </td>
+
+                                    <td class="text-end">
+                                        @row.Total.WorkHours.ToString("N2")
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- =====================================
+                                     BARIS PRODUCT LINE
+                                     ===================================== -->
+                                @if (row.ProductLines.Count > 1)
+                                {
+                                    foreach (var productLine in row.ProductLines)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                @productLine.ProductLine
+                                            </td>
+
+
+                                            @foreach (var week in Model.ReportWeeks)
+                                            {
+                                                var hours =
+                                                productLine.WeeklyHours.ContainsKey(week)
+                                                ? productLine.WeeklyHours[week]
+                                                : new LaborProductivity.Models.WorkHoursReportHours();
+
+                                                <td class="text-end">
+                                                    @hours.NormalHours.ToString("N2")
+                                                </td>
+
+                                                <td class="text-end">
+                                                    @hours.WorkHours.ToString("N2")
+                                                </td>
+                                            }
+
+
+                                            <td class="text-end">
+                                                @productLine.Total.NormalHours.ToString("N2")
+                                            </td>
+
+                                            <td class="text-end">
+                                                @productLine.Total.WorkHours.ToString("N2")
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <!-- =====================================
+                                 TIDAK ADA DATA
+                                 ===================================== -->
+                            <tr>
+
+                                <td colspan="100%"
+                                    class="text-center text-muted py-4">
+
+                                    Tidak ada data Work Hours
+                                    untuk filter yang dipilih.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                    <!-- =================================================
+                         GRAND TOTAL
+                         ================================================= -->
+                    @if (Model.ReportRows.Any())
+                    {
+                        <tfoot>
+
+                            <tr class="table-dark fw-bold">
+
+                                <td colspan="2"
+                                    class="text-end">
+                                    Grand Total
+                                </td>
+
+
+                                @foreach (var week in Model.ReportWeeks)
+                                {
+                                    var hours =
+                                    Model.GrandTotal.WeeklyHours.ContainsKey(week)
+                                    ? Model.GrandTotal.WeeklyHours[week]
+                                    : new LaborProductivity.Models.WorkHoursReportHours();
+
+                                    <td class="text-end">
+                                        @hours.NormalHours.ToString("N2")
+                                    </td>
+
+                                    <td class="text-end">
+                                        @hours.WorkHours.ToString("N2")
+                                    </td>
+                                }
+
+
+                                <td class="text-end">
+                                    @Model.GrandTotal.Total.NormalHours.ToString("N2")
+                                </td>
+
+                                <td class="text-end">
+                                    @Model.GrandTotal.Total.WorkHours.ToString("N2")
+                                </td>
+
+                            </tr>
+
+                        </tfoot>
+                    }
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function submitFiscalYear(select) {
+
+            // Ketika Fiscal Year berubah,
+            // Fiscal Week dikembalikan ke All Weeks.
+            const form = select.form;
+
+            const weekSelect =
+                form.querySelector('[name="SelectedFiscalWeek"]');
+
+            if (weekSelect) {
+                weekSelect.value = "";
+            }
+
+            form.submit();
+        }
+
+    </script>
+}

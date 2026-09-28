@@ -1,0 +1,355 @@
+﻿@{
+    ViewData["Title"] = "Create Production Output";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Create Production Output</h2>
+            <p class="text-muted mb-0">
+                Input data Production Output berdasarkan Product Line.
+            </p>
+        </div>
+
+        <a asp-controller="Production"
+           asp-action="ProductionOutput"
+           class="btn btn-secondary">
+            Kembali
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-controller="Production"
+                  asp-action="CreateProductionOutput"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- Cost Center / Product Group / Product Line -->
+                <div class="mb-3">
+                    <label for="dataMasterId" class="form-label">
+                        Cost Center / Product Group / Product Line
+                    </label>
+
+                    <select id="dataMasterId"
+                            name="DataMasterId"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            -- Pilih Cost Center / Product Group / Product Line --
+                        </option>
+
+                    </select>
+
+                    <span id="dataMasterError"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Fiscal Year -->
+                <div class="mb-3">
+                    <label for="fiscalYear" class="form-label">
+                        Fiscal Year
+                    </label>
+
+                    <select id="fiscalYear"
+                            name="FiscalYear"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            -- Pilih Fiscal Year --
+                        </option>
+
+                        @foreach (var year in ViewBag.FiscalYears)
+                        {
+                            <option value="@year">
+                                @year
+                            </option>
+                        }
+
+                    </select>
+                </div>
+
+                <!-- Fiscal Week -->
+                <div class="mb-3">
+                    <label for="weekNo" class="form-label">
+                        Fiscal Week
+                    </label>
+
+                    <select id="weekNo"
+                            name="WeekNo"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            -- Pilih Fiscal Week --
+                        </option>
+
+                    </select>
+
+                    <small id="weekDateInfo"
+                           class="text-muted"></small>
+                </div>
+
+                <!-- Quality Input -->
+                <div class="mb-3">
+                    <label for="qualityInput" class="form-label">
+                        Quality Input
+                    </label>
+
+                    <input type="number"
+                           id="qualityInput"
+                           name="QualityInput"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           required />
+                </div>
+
+                <!-- Quality Output -->
+                <div class="mb-3">
+                    <label for="qualityOutput" class="form-label">
+                        Quality Output
+                    </label>
+
+                    <input type="number"
+                           id="qualityOutput"
+                           name="QualityOutput"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           required />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Simpan
+                    </button>
+
+                    <a asp-controller="Production"
+                       asp-action="ProductionOutput"
+                       class="btn btn-secondary">
+                        Batal
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const dataMasterSelect =
+                document.getElementById("dataMasterId");
+
+            const fiscalYearSelect =
+                document.getElementById("fiscalYear");
+
+            const weekSelect =
+                document.getElementById("weekNo");
+
+            const weekDateInfo =
+                document.getElementById("weekDateInfo");
+
+            /*
+             * Mengambil Data Master berdasarkan scope user Production.
+             *
+             * Tidak ada Department yang dipilih dari form.
+             * Server sudah menentukan Department + Cost Center +
+             * Product Group berdasarkan scope akun yang sedang login.
+             *
+             * Product Line tetap ditampilkan agar user dapat memilih
+             * Product Line yang ingin dimasukkan.
+             */
+            fetch('@Url.Action("GetAllowedDataMasters", "Production")')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(
+                            "Gagal mengambil Data Master."
+                        );
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+
+                    dataMasterSelect.innerHTML =
+                        '<option value="">-- Pilih Cost Center / Product Group / Product Line --</option>';
+
+                    data.forEach(item => {
+
+                        const option =
+                            document.createElement("option");
+
+                        option.value = item.id;
+
+                        option.textContent =
+                            `${item.costCenter} - ${item.productGroup} - ${item.productLine}`;
+
+                        dataMasterSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                    dataMasterSelect.innerHTML =
+                        '<option value="">Gagal memuat Data Master</option>';
+                });
+
+
+            /*
+             * Ketika Fiscal Year dipilih,
+             * ambil daftar Fiscal Week dari database.
+             */
+            fiscalYearSelect.addEventListener("change", function () {
+
+                const fiscalYear = this.value;
+                const dataMasterId = dataMasterSelect.value;
+
+                weekSelect.innerHTML =
+                    '<option value="">-- Pilih Fiscal Week --</option>';
+
+                weekDateInfo.textContent = "";
+
+                // Fiscal Year dan Data Master harus dipilih terlebih dahulu.
+                if (!fiscalYear || !dataMasterId) {
+                    return;
+                }
+
+                fetch(
+                    '@Url.Action("GetFiscalWeeks", "Production")'
+                    + '?fiscalYear='
+                    + encodeURIComponent(fiscalYear)
+                    + '&dataMasterId='
+                    + encodeURIComponent(dataMasterId)
+                )
+                    .then(response => {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Gagal mengambil Fiscal Week."
+                            );
+                        }
+
+                        return response.json();
+                    })
+                    .then(data => {
+
+                        if (data.length === 0) {
+
+                            const option =
+                                document.createElement("option");
+
+                            option.value = "";
+
+                            option.textContent =
+                                "-- Semua Fiscal Week sudah memiliki data --";
+
+                            weekSelect.appendChild(option);
+
+                            return;
+                        }
+
+                        data.forEach(item => {
+
+                            const option =
+                                document.createElement("option");
+
+                            option.value = item.weekNo;
+
+                            option.textContent =
+                                `Week ${item.weekNo}`;
+
+                            option.dataset.startDate =
+                                item.startDate;
+
+                            option.dataset.endDate =
+                                item.endDate;
+
+                            weekSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+
+                        console.error(error);
+
+                        weekSelect.innerHTML =
+                            '<option value="">Gagal memuat Fiscal Week</option>';
+                    });
+            });
+
+
+            /*
+             * Ketika Product Line (Data Master) dipilih,
+             * muat ulang Fiscal Week karena Fiscal Week yang
+             * sudah terpakai berbeda-beda untuk setiap Data Master.
+             */
+            dataMasterSelect.addEventListener("change", function () {
+
+                const fiscalYear = fiscalYearSelect.value;
+                const dataMasterId = this.value;
+
+                weekSelect.innerHTML =
+                    '<option value="">-- Pilih Fiscal Week --</option>';
+
+                weekDateInfo.textContent = "";
+
+                // Jika Fiscal Year belum dipilih,
+                // tunggu sampai user memilih Fiscal Year.
+                if (!fiscalYear || !dataMasterId) {
+                    return;
+                }
+
+                fiscalYearSelect.dispatchEvent(
+                    new Event("change")
+                );
+            });
+
+
+            /*
+             * Ketika Fiscal Week dipilih,
+             * tampilkan periode tanggalnya.
+             */
+            weekSelect.addEventListener("change", function () {
+
+                const selectedOption =
+                    this.options[this.selectedIndex];
+
+                if (!selectedOption.value) {
+
+                    weekDateInfo.textContent = "";
+
+                    return;
+                }
+
+                const startDate =
+                    selectedOption.dataset.startDate;
+
+                const endDate =
+                    selectedOption.dataset.endDate;
+
+                if (startDate && endDate) {
+
+                    weekDateInfo.textContent =
+                        `Periode: ${startDate} sampai ${endDate}`;
+                }
+            });
+
+        });
+    </script>
+}

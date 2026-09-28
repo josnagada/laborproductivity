@@ -1,0 +1,405 @@
+﻿@{
+    ViewData["Title"] = "CI Dashboard";
+}
+
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+        .dashboard-hero h2 {
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .dashboard-hero p {
+            margin: 0;
+            opacity: 0.85;
+        }
+
+    .dashboard-date {
+        text-align: right;
+    }
+
+        .dashboard-date .date {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .dashboard-date .time {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .dashboard-date .day {
+            font-size: 13px;
+            opacity: 0.75;
+        }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        min-height: 120px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+    }
+
+    .baseline-table-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 101.5%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+    }
+
+    .stat-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-right: 18px;
+    }
+
+        .stat-icon.tertinggi {
+            background: #e8f9ee;
+        }
+
+        .stat-icon.terendah {
+            background: #fdeaea;
+        }
+
+    .stat-info .stat-label {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .stat-info .stat-number {
+        font-size: 26px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* Filter Year */
+
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+        .filter-bar select {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: white;
+        }
+</style>
+
+<div class="container-fluid">
+
+    <!-- Hero Dashboard -->
+    <div class="dashboard-hero">
+
+        <div class="row">
+
+            <div class="col-md-7">
+                <h2>Welcome Back, CI Team!</h2>
+
+                <p>
+                    Continuous Improvement Dashboard
+                </p>
+            </div>
+
+            <div class="col-md-5">
+                <div class="dashboard-date">
+
+                    <div class="date" id="current-date">
+                        18 September 2026
+                    </div>
+
+                    <div class="time" id="current-time">
+                        00:00:00
+                    </div>
+
+                    <div class="day" id="current-day">
+                        Friday
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Data Summary -->
+    <div class="filter-bar">
+
+        <div class="section-title" style="margin-bottom: 0;">
+            Data Summary
+        </div>
+
+        <!-- Filter Year -->
+        <form method="get" asp-action="Index">
+
+            <select name="year"
+                    onchange="this.form.submit()">
+
+                @foreach (var y in ViewBag.StatYears)
+                {
+                    if (y == (int)ViewBag.SelectedYear)
+                    {
+                        <option value="@y" selected>@y</option>
+                    }
+                    else
+                    {
+                        <option value="@y">@y</option>
+                    }
+                }
+
+            </select>
+
+        </form>
+
+    </div>
+
+    <div class="row">
+
+        <!-- Baseline Tertinggi -->
+        <div class="col-lg-6 col-md-6 col-sm-12">
+
+            <div class="stat-card">
+
+                <div class="stat-icon tertinggi">
+                    ⬆️
+                </div>
+
+                <div class="stat-info">
+
+                    <div class="stat-label">
+                        Baseline Tertinggi (@ViewBag.SelectedYear)
+                    </div>
+
+                    @if (ViewBag.HighestBaseline != null)
+                    {
+                        <div class="stat-number">
+                            @ViewBag.HighestBaseline.BaselineHourPerPiece.ToString("N4")
+                        </div>
+
+                        <div style="font-size: 13px; color: #777;">
+                            CC @ViewBag.HighestBaseline.DataMaster.CostCenter
+                            -
+                            @ViewBag.HighestBaseline.DataMaster.ProductGroup
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-number">
+                            -
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Baseline Terendah -->
+        <div class="col-lg-6 col-md-6 col-sm-12">
+
+            <div class="stat-card">
+
+                <div class="stat-icon terendah">
+                    ⬇️
+                </div>
+
+                <div class="stat-info">
+
+                    <div class="stat-label">
+                        Baseline Terendah (@ViewBag.SelectedYear)
+                    </div>
+
+                    @if (ViewBag.LowestBaseline != null)
+                    {
+                        <div class="stat-number">
+                            @ViewBag.LowestBaseline.BaselineHourPerPiece.ToString("N4")
+                        </div>
+
+                        <div style="font-size: 13px; color: #777;">
+                            CC @ViewBag.LowestBaseline.DataMaster.CostCenter
+                            -
+                            @ViewBag.LowestBaseline.DataMaster.ProductGroup
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-number">
+                            -
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Baseline Hour/Pc per Tahun -->
+        <div class="section-title" style="margin-top: 10px;">
+            Baseline Hour/Pc per Tahun
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="baseline-table-card">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th>CC</th>
+                                    <th>Product Group</th>
+                                    <th>Product Line</th>
+                                    <th class="text-right">
+                                        @ViewBag.SelectedYear
+                                    </th>
+
+                                </tr>
+                            </thead>
+
+                            @* tabel baseline index ci *@
+                            <tbody>
+                                @foreach (var baseline in ViewBag.BaselineRows)
+                                {
+                                    if (baseline.Year == (int)ViewBag.SelectedYear)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @baseline.DataMaster.CostCenter
+                                            </td>
+
+                                            <td>
+                                                @baseline.DataMaster.ProductGroup
+                                            </td>
+
+                                            <td>
+                                                @baseline.DataMaster.ProductLine
+                                            </td>
+
+                                            <td class="text-right">
+                                                @baseline.BaselineHourPerPiece.ToString("N4")
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Manage Baseline -->
+        <div class="row">
+            <div class="col-md-12">
+                <a asp-controller="Ci"
+                   asp-action="Baseline"
+                   class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    + Manage Baseline
+                </a>
+            </div>
+        </div>
+
+@section Scripts {
+
+    <script>
+
+        // Fungsi untuk memperbarui tanggal dan jam dashboard
+        function updateDateTime() {
+
+            const now = new Date();
+
+            const dateOptions = {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            };
+
+            const dateText = now.toLocaleDateString(
+                'id-ID',
+                dateOptions
+            );
+
+            const hours = String(
+                now.getHours()
+            ).padStart(2, '0');
+
+            const minutes = String(
+                now.getMinutes()
+            ).padStart(2, '0');
+
+            const seconds = String(
+                now.getSeconds()
+            ).padStart(2, '0');
+
+            const dayOptions = {
+                weekday: 'long'
+            };
+
+            const dayText = now.toLocaleDateString(
+                'id-ID',
+                dayOptions
+            );
+
+            document.getElementById(
+                'current-date'
+            ).textContent = dateText;
+
+            document.getElementById(
+                'current-time'
+            ).textContent =
+                hours + ':' + minutes + ':' + seconds;
+
+            document.getElementById(
+                'current-day'
+            ).textContent = dayText;
+        }
+
+        updateDateTime();
+
+        setInterval(updateDateTime, 1000);
+
+    </script>
+}

@@ -1,0 +1,372 @@
+﻿@model LaborProductivity.Models.ProductionReportViewModel
+
+@{
+    ViewData["Title"] = "Production Output Report";
+}
+
+<div class="container-fluid">
+
+    <!-- ===================== HEADER ===================== -->
+
+    <div class="mb-4">
+        <h2>Production Output Report</h2>
+    </div>
+
+    @if (string.IsNullOrEmpty(Model.CostCenter))
+    {
+        <div class="alert alert-warning">
+            Akun ini belum terhubung ke Cost Center manapun.
+            Hubungi Admin untuk melengkapi data akun.
+        </div>
+    }
+    else
+    {
+        <!-- ===================== FILTER BOX ===================== -->
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+
+                <p class="text-muted mb-3">
+                    Cost Center:
+                    <strong>@Model.CostCenter</strong>
+                    &mdash;
+                    @Model.DepartmentName
+                    /
+                    @Model.ProductGroup
+                </p>
+
+                <form asp-controller="Production"
+                      asp-action="ProductionReport"
+                      method="get"
+                      id="filterForm">
+
+                    <div class="row">
+
+                        <!-- Fiscal Year -->
+
+                        <div class="col-md-3">
+                            <label for="fiscalYear"
+                                   class="form-label">
+                                Fiscal Year
+                            </label>
+
+                            <select id="fiscalYear"
+                                    name="year"
+                                    class="form-select">
+
+                                @foreach (var fiscalYear in Model.FiscalYears)
+                                {
+                                    <option value="@fiscalYear"
+                                            selected="@(fiscalYear == Model.SelectedYear)">
+                                        @fiscalYear
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <!-- Fiscal Week -->
+
+                        <div class="col-md-3">
+
+                            <label for="fiscalWeek"
+                                   class="form-label">
+                                Fiscal Week
+                            </label>
+
+                            <select id="fiscalWeek"
+                                    name="fiscalWeek"
+                                    class="form-select">
+
+                                <option value="">
+                                    All Weeks
+                                </option>
+
+                                @foreach (var week in Model.FiscalWeeks)
+                                {
+                                    <option value="@week.WeekNo"
+                                            selected="@(Model.SelectedWeek == week.WeekNo)">
+
+                                        Week @week.WeekNo
+                                        (@week.StartDate.ToString("MM/dd/yyyy")
+                                        -
+                                        @week.EndDate.ToString("MM/dd/yyyy"))
+
+                                    </option>
+                                }
+
+                            </select>
+
+                            <small id="weekRangeInfo"
+                                   class="text-muted">
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Apply
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+
+        <!-- ===================== REPORT TABLE ===================== -->
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                @if (!Model.ProductLines.Any())
+                {
+                    <p class="text-muted mb-0">
+                        Belum ada data Production Output
+                        untuk filter yang dipilih.
+                    </p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered"
+                               style="min-width:900px;">
+
+                            <thead>
+
+                                <!-- Header Week -->
+
+                                <tr style="background:#1a2744;color:white;">
+
+                                    <th rowspan="2"
+                                        style="vertical-align:middle;">
+                                        Product Line
+                                    </th>
+
+                                    @foreach (var week in Model.ReportWeeks)
+                                    {
+                                        <th colspan="2"
+                                            class="text-center">
+
+                                            Week @week.WeekNo
+
+                                            <br />
+
+                                            <small style="font-weight:400;opacity:0.85;">
+                                                @week.StartDate.ToString("dd MMM")
+                                                -
+                                                @week.EndDate.ToString("dd MMM yyyy")
+                                            </small>
+
+                                        </th>
+                                    }
+
+                                    <th colspan="2"
+                                        class="text-center"
+                                        style="background:#3c8dbc;">
+
+                                        Total
+
+                                    </th>
+
+                                </tr>
+
+                                <!-- Header Qty -->
+
+                                <tr style="background:#28395c;color:white;">
+
+                                    @foreach (var week in Model.ReportWeeks)
+                                    {
+                                        <th>
+                                            Qty Input
+                                        </th>
+
+                                        <th>
+                                            Qty Output
+                                        </th>
+                                    }
+
+                                    <th style="background:#3c8dbc;">
+                                        Qty Input
+                                    </th>
+
+                                    <th style="background:#3c8dbc;">
+                                        Qty Output
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <!--
+                                    Satu baris per Product Line.
+                                    Sebelumnya seluruh data digabung jadi
+                                    satu baris CC; sekarang setiap Product
+                                    Line di dalam Product Group yang sama
+                                    tampil sebagai baris terpisah.
+                                -->
+                                @foreach (var productLine in Model.ProductLines)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @Model.CostCenter
+                                            &mdash;
+                                            @productLine.ProductLine
+                                        </td>
+
+                                        @foreach (var week in productLine.Weeks)
+                                        {
+                                            <td class="text-end">
+                                                @week.QualityInput.ToString("N2")
+                                            </td>
+
+                                            <td class="text-end">
+                                                @week.QualityOutput.ToString("N2")
+                                            </td>
+                                        }
+
+                                        <td class="text-end"
+                                            style="background:#f4f6f9;font-weight:600;">
+
+                                            @productLine.TotalQualityInput.ToString("N2")
+
+                                        </td>
+
+                                        <td class="text-end"
+                                            style="background:#f4f6f9;font-weight:600;">
+
+                                            @productLine.TotalQualityOutput.ToString("N2")
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                            <tfoot>
+
+                                <!--
+                                    Grand Total: jumlah seluruh Product Line
+                                    untuk tiap minggu, plus grand total kolom
+                                    paling kanan.
+                                -->
+
+                                <tr style="background:#eef1f4;font-weight:700;">
+
+                                    <td>
+                                        Grand Total
+                                    </td>
+
+                                    @for (var i = 0; i < Model.ReportWeeks.Count; i++)
+                                    {
+                                        var weekIndex = i;
+
+                                        <td class="text-end">
+                                            @(Model.ProductLines.Sum(pl => pl.Weeks[weekIndex].QualityInput).ToString("N2"))
+                                        </td>
+
+                                        <td class="text-end">
+                                            @(Model.ProductLines.Sum(pl => pl.Weeks[weekIndex].QualityOutput).ToString("N2"))
+                                        </td>
+                                    }
+
+                                    <td class="text-end"
+                                        style="background:#dfe4ea;">
+
+                                        @Model.TotalQualityInput.ToString("N2")
+
+                                    </td>
+
+                                    <td class="text-end"
+                                        style="background:#dfe4ea;">
+
+                                        @Model.TotalQualityOutput.ToString("N2")
+
+                                    </td>
+
+                                </tr>
+
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+        // =====================================================
+        // Menampilkan periode tanggal Fiscal Week
+        // yang sedang dipilih.
+        // =====================================================
+
+        const fiscalWeekSelect =
+            document.getElementById("fiscalWeek");
+
+        const weekRangeInfo =
+            document.getElementById("weekRangeInfo");
+
+        function updateWeekRange()
+        {
+            const selectedOption =
+                fiscalWeekSelect.options[
+                    fiscalWeekSelect.selectedIndex
+                ];
+
+            if (!selectedOption ||
+                selectedOption.value === "")
+            {
+                weekRangeInfo.textContent = "";
+                return;
+            }
+
+            // Ambil teks tanggal dari option.
+            const text = selectedOption.text;
+
+            const startIndex = text.indexOf("(");
+
+            if (startIndex >= 0)
+            {
+                weekRangeInfo.textContent =
+                    "Periode: " +
+                    text.substring(startIndex + 1, text.length - 1);
+            }
+        }
+
+        fiscalWeekSelect.addEventListener(
+            "change",
+            updateWeekRange
+        );
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function ()
+            {
+                updateWeekRange();
+            }
+        );
+
+    </script>
+}

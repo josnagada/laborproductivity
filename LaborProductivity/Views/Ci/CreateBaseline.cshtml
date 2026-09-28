@@ -1,0 +1,270 @@
+﻿@model IEnumerable<LaborProductivity.Models.Department>
+
+@{
+    ViewData["Title"] = "Add New Baseline";
+
+    var dataMasters =
+        ViewBag.DataMasters as IEnumerable<LaborProductivity.Models.DataMaster>
+        ?? Enumerable.Empty<LaborProductivity.Models.DataMaster>();
+
+    var departments =
+        ViewBag.Departments as IEnumerable<LaborProductivity.Models.Department>
+        ?? Enumerable.Empty<LaborProductivity.Models.Department>();
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="mb-1">Add New Baseline</h2>
+
+        <p class="text-muted mb-0">
+            Tambahkan data Baseline Hour per Piece.
+        </p>
+    </div>
+
+
+    <!-- Form Card -->
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach (var error in ViewData.ModelState.Values
+                                            .SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+
+            <form asp-controller="Ci"
+                  asp-action="CreateBaseline"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <!-- Department -->
+                <div class="mb-3">
+
+                    <label for="departmentId"
+                           class="form-label">
+                        Department
+                    </label>
+
+                    <select class="form-select"
+                            id="departmentId"
+                            name="departmentId"
+                            required>
+
+                        <option value="">
+                            Select department
+                        </option>
+
+                        @foreach (var department in departments)
+                        {
+                            <option value="@department.DepartmentId">
+                                @department.DepartmentName
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- Cost Center -->
+                <div class="mb-3">
+
+                    <label for="costCenter"
+                           class="form-label">
+                        Cost Center
+                    </label>
+
+                    <select class="form-select"
+                            id="costCenter"
+                            name="costCenter"
+                            required>
+
+                        <option value="">
+                            Select department first
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Year -->
+                <div class="mb-3">
+
+                    <label for="year"
+                           class="form-label">
+                        Year
+                    </label>
+
+                    <select class="form-select"
+                            id="year"
+                            name="year"
+                            required>
+
+                        @for (int y = 2015; y <= DateTime.Now.Year + 10; y++)
+                        {
+                            if (y == DateTime.Now.Year)
+                            {
+                                <option value="@y" selected>
+                                    @y
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@y">
+                                    @y
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- Baseline Hour / Pc -->
+                <div class="mb-4">
+
+                    <label for="baselineHourPerPiece"
+                           class="form-label">
+                        Baseline Hour/Pc
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           id="baselineHourPerPiece"
+                           name="baselineHourPerPiece"
+                           step="0.00001"
+                           min="0.00001"
+                           placeholder="contoh: 0.21501"
+                           required />
+
+                    <div class="form-text">
+                        Masukkan nilai baseline dalam satuan Hour per Piece.
+                    </div>
+
+                </div>
+
+
+                <!-- Action -->
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Save
+                    </button>
+
+                    <a asp-controller="Ci"
+                       asp-action="Baseline"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    // Data Master dari database dikirim dari Controller
+    const dataMasterList = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(dataMasters)
+        );
+
+    const departmentSelect =
+        document.getElementById("departmentId");
+
+    const costCenterSelect =
+        document.getElementById("costCenter");
+
+
+    // =====================================================
+    // DEPARTMENT -> COST CENTER
+    // =====================================================
+
+    departmentSelect.addEventListener("change", function () {
+
+        const departmentId = this.value;
+
+        costCenterSelect.innerHTML = "";
+
+        if (departmentId === "") {
+
+            costCenterSelect.innerHTML =
+                '<option value="">Select department first</option>';
+
+            return;
+        }
+
+
+        // Mengambil Cost Center yang unik
+        // berdasarkan Department yang dipilih
+        const costCenters = [];
+
+        dataMasterList.forEach(function (dataMaster) {
+
+            if (
+                String(dataMaster.DepartmentId)
+                === String(departmentId)
+            ) {
+
+                if (!costCenters.includes(dataMaster.CostCenter)) {
+
+                    costCenters.push(dataMaster.CostCenter);
+
+                }
+
+            }
+
+        });
+
+
+        if (costCenters.length === 0) {
+
+            costCenterSelect.innerHTML =
+                '<option value="">No cost center for this department</option>';
+
+            return;
+        }
+
+
+        // Option default
+        costCenterSelect.innerHTML =
+            '<option value="">Select cost center</option>';
+
+
+        // Masukkan Cost Center ke dropdown
+        costCenters.forEach(function (costCenter) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = costCenter;
+
+            option.textContent = costCenter;
+
+            costCenterSelect.appendChild(option);
+
+        });
+
+    });
+</script>

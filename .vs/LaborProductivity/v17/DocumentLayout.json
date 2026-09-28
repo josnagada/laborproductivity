@@ -1,0 +1,309 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\user\\source\\repos\\LaborProductivity\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\wwwroot\\css\\landing.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\wwwroot\\css\\landing.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\controllers\\productivitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\controllers\\productivitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\views\\admin\\_createuserform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\views\\admin\\_createuserform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\wwwroot\\css\\productivity.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\wwwroot\\css\\productivity.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\controllers\\workhourscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\controllers\\workhourscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\controllers\\productioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\controllers\\productioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\wwwroot\\css\\login.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\wwwroot\\css\\login.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\views\\admin\\websetting.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\views\\admin\\websetting.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\wwwroot\\css\\users.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\wwwroot\\css\\users.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\models\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\models\\setting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\models\\slider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\models\\slider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\models\\productivityreportviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\models\\productivityreportviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|c:\\users\\user\\source\\repos\\laborproductivity\\laborproductivity\\views\\production\\productionreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E9C7777-3C34-48AE-96BC-AE1D8795C5F7}|LaborProductivity\\LaborProductivity.csproj|solutionrelative:laborproductivity\\views\\production\\productionreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "LaborProductivity\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-23T13:38:58.636Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_CreateUserForm.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\_CreateUserForm.cshtml",
+              "RelativeDocumentMoniker": "LaborProductivity\\Views\\Admin\\_CreateUserForm.cshtml",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\_CreateUserForm.cshtml",
+              "RelativeToolTip": "LaborProductivity\\Views\\Admin\\_CreateUserForm.cshtml",
+              "ViewState": "AgIAAOMBAAAAAAAAAAAcwPkBAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-22T07:52:12.212Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Users.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\Users.cshtml",
+              "RelativeDocumentMoniker": "LaborProductivity\\Views\\Admin\\Users.cshtml",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\Users.cshtml",
+              "RelativeToolTip": "LaborProductivity\\Views\\Admin\\Users.cshtml",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAcwAIBAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-22T07:48:42.494Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProductivityController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\ProductivityController.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Controllers\\ProductivityController.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\ProductivityController.cs",
+              "RelativeToolTip": "LaborProductivity\\Controllers\\ProductivityController.cs",
+              "ViewState": "AgIAALUEAAAAAAAAAAAgwM0EAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T04:43:26.066Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "productivity.css",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\productivity.css",
+              "RelativeDocumentMoniker": "LaborProductivity\\wwwroot\\css\\productivity.css",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\productivity.css",
+              "RelativeToolTip": "LaborProductivity\\wwwroot\\css\\productivity.css",
+              "ViewState": "AgIAAK0AAAAAAAAAAAAiwMoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-09-22T17:55:22.578Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "WorkHoursController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\WorkHoursController.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Controllers\\WorkHoursController.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\WorkHoursController.cs",
+              "RelativeToolTip": "LaborProductivity\\Controllers\\WorkHoursController.cs",
+              "ViewState": "AgIAAKEBAAAAAAAAAAAAALEBAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-22T23:38:52.378Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "landing.css",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\landing.css",
+              "RelativeDocumentMoniker": "LaborProductivity\\wwwroot\\css\\landing.css",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\landing.css",
+              "RelativeToolTip": "LaborProductivity\\wwwroot\\css\\landing.css",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAqwG4AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-09-22T12:54:11.928Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ProductionController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\ProductionController.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Controllers\\ProductionController.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\ProductionController.cs",
+              "RelativeToolTip": "LaborProductivity\\Controllers\\ProductionController.cs",
+              "ViewState": "AgIAAEQDAAAAAAAAAAAAwFkDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T15:15:16.725Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "LaborProductivity\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "LaborProductivity\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAE0DAAAAAAAAAAAgwHYDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-21T15:24:46.808Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "login.css",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\login.css",
+              "RelativeDocumentMoniker": "LaborProductivity\\wwwroot\\css\\login.css",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\login.css",
+              "RelativeToolTip": "LaborProductivity\\wwwroot\\css\\login.css",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAAAEcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-09-22T17:27:31.443Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "WebSetting.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\WebSetting.cshtml",
+              "RelativeDocumentMoniker": "LaborProductivity\\Views\\Admin\\WebSetting.cshtml",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Admin\\WebSetting.cshtml",
+              "RelativeToolTip": "LaborProductivity\\Views\\Admin\\WebSetting.cshtml",
+              "ViewState": "AgIAALYBAAAAAAAAAAAowOYBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-22T10:16:02.905Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "LaborProductivity\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "LaborProductivity\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAPYAAAAAAAAAAAAswPYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-09-22T17:07:19.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "users.css",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\users.css",
+              "RelativeDocumentMoniker": "LaborProductivity\\wwwroot\\css\\users.css",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\wwwroot\\css\\users.css",
+              "RelativeToolTip": "LaborProductivity\\wwwroot\\css\\users.css",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAswJoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-09-22T09:35:21.211Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Setting.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\Setting.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Models\\Setting.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\Setting.cs",
+              "RelativeToolTip": "LaborProductivity\\Models\\Setting.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAwDUAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T15:44:30.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Slider.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\Slider.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Models\\Slider.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\Slider.cs",
+              "RelativeToolTip": "LaborProductivity\\Models\\Slider.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAA2wC8AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-22T11:21:48.188Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "LoginController.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\LoginController.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Controllers\\LoginController.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Controllers\\LoginController.cs",
+              "RelativeToolTip": "LaborProductivity\\Controllers\\LoginController.cs",
+              "ViewState": "AgIAAH0AAAAAAAAAAAAmwI8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-22T10:02:57.478Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ProductivityReportViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\ProductivityReportViewModel.cs",
+              "RelativeDocumentMoniker": "LaborProductivity\\Models\\ProductivityReportViewModel.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Models\\ProductivityReportViewModel.cs",
+              "RelativeToolTip": "LaborProductivity\\Models\\ProductivityReportViewModel.cs",
+              "ViewState": "AgIAALkAAAAAAAAAAAAIwM8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T04:40:21.125Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "ProductionReport.cshtml",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Production\\ProductionReport.cshtml",
+              "RelativeDocumentMoniker": "LaborProductivity\\Views\\Production\\ProductionReport.cshtml",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\LaborProductivity\\LaborProductivity\\Views\\Production\\ProductionReport.cshtml",
+              "RelativeToolTip": "LaborProductivity\\Views\\Production\\ProductionReport.cshtml",
+              "ViewState": "AgIAAFcBAAAAAAAAAAAAAFwBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-21T01:57:28.23Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

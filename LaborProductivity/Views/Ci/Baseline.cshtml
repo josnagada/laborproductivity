@@ -1,0 +1,524 @@
+﻿@model IEnumerable<LaborProductivity.Models.Baseline>
+
+@{
+    ViewData["Title"] = "Baseline";
+
+    // Ambil semua tahun yang tersedia untuk dijadikan kolom.
+    var years = Model
+        .Select(x => x.Year)
+        .Distinct()
+        .OrderBy(x => x)
+        .ToList();
+
+    // Gabungkan data berdasarkan:
+    // CC + Department + Product Group + Product Line
+    //
+    // Karena satu Product Line dapat mempunyai
+    // baseline berbeda untuk setiap tahun.
+    var baselineGroups = Model
+        .GroupBy(x => new
+        {
+            CostCenter = x.DataMaster?.CostCenter,
+            Department = x.DataMaster?.Department?.DepartmentName,
+            ProductGroup = x.DataMaster?.ProductGroup,
+            ProductLine = x.DataMaster?.ProductLine
+        })
+        .OrderBy(x => x.Key.CostCenter)
+        .ThenBy(x => x.Key.ProductLine)
+        .ToList();
+}
+
+<div class="container-fluid">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Baseline</h2>
+
+            <p class="text-muted mb-0">
+                Manage Data Baseline Hour per Piece.
+            </p>
+        </div>
+
+        <button type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addBaselineModal">
+            + Add Baseline
+        </button>
+
+    </div>
+
+
+    <!-- =========================================================
+         SweetAlertbaseline
+         ========================================================= -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '@Html.Raw(TempData["SuccessMessage"])',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '@Html.Raw(TempData["ErrorMessage"])',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    }
+
+
+    <!-- =========================================================
+         BASELINE TABLE
+         ========================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>CC</th>
+
+                            <th>Department</th>
+
+                            <th>Product Group</th>
+
+                            <th>Product Line</th>
+
+                            @foreach (var year in years)
+                            {
+                                <th class="text-center">
+                                    @year
+                                </th>
+                            }
+
+                            <th style="width: 180px;">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var group in baselineGroups)
+                        {
+                            <tr>
+
+                                <!-- CC -->
+                                <td>
+                                    @group.Key.CostCenter
+                                </td>
+
+
+                                <!-- Department -->
+                                <td>
+                                    @group.Key.Department
+                                </td>
+
+
+                                <!-- Product Group -->
+                                <td>
+                                    @group.Key.ProductGroup
+                                </td>
+
+
+                                <!-- Product Line -->
+                                <td>
+                                    @group.Key.ProductLine
+                                </td>
+
+
+                                <!-- =====================================
+                                     BASELINE PER TAHUN
+                                     ===================================== -->
+                                @foreach (var year in years)
+                                {
+                                    var baseline = group
+                                    .FirstOrDefault(x => x.Year == year);
+
+                                    <td class="text-center">
+
+                                        @if (baseline != null)
+                                        {
+                                            @baseline.BaselineHourPerPiece.ToString("0.00000")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+                                }
+
+
+                                <!-- =====================================
+                                     ACTION
+                                     ===================================== -->
+
+                                <td>
+                                    @foreach (var baseline in group.OrderBy(x => x.Year))
+                                    {
+                                        <div class="mb-1">
+
+                                            <a asp-controller="Ci"
+                                               asp-action="EditBaseline"
+                                               asp-route-id="@baseline.BaselineId"
+                                               class="btn btn-sm btn-warning">
+                                                Edit @baseline.Year
+                                            </a>
+
+                                            <form asp-controller="Ci"
+                                                  asp-action="DeleteBaseline"
+                                                  asp-route-id="@baseline.BaselineId"
+                                                  method="post"
+                                                  style="display:inline;"
+                                                  onsubmit="return confirm('Yakin ingin menghapus baseline tahun @baseline.Year?');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-danger">
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+
+                        @if (!baselineGroups.Any())
+                        {
+                            <tr>
+
+                                <td colspan="@(years.Count + 5)"
+                                    class="text-center text-muted">
+
+                                    Belum ada data baseline.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ADD BASELINE MODAL
+     ========================================================= -->
+
+<div class="modal fade"
+     id="addBaselineModal"
+     tabindex="-1"
+     aria-labelledby="addBaselineModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="addBaselineModalLabel">
+                    Add New Baseline
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                <p class="text-muted mb-4">
+                    Add the baseline hours per piece.
+                </p>
+
+                <form asp-controller="Ci"
+                      asp-action="CreateBaseline"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+
+                    <!-- Department -->
+                    <div class="mb-3">
+
+                        <label for="modalDepartmentId"
+                               class="form-label">
+                            Department
+                        </label>
+
+                        <select class="form-select"
+                                id="modalDepartmentId"
+                                name="departmentId"
+                                required>
+
+                            <option value="">
+                                Select department
+                            </option>
+
+                            @foreach (var department in ViewBag.Departments
+                                                        as IEnumerable<LaborProductivity.Models.Department>
+                                                        ?? Enumerable.Empty<LaborProductivity.Models.Department>())
+                            {
+                                <option value="@department.DepartmentId">
+                                    @department.DepartmentName
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Cost Center -->
+                    <div class="mb-3">
+
+                        <label for="modalCostCenter"
+                               class="form-label">
+                            Cost Center
+                        </label>
+
+                        <select class="form-select"
+                                id="modalCostCenter"
+                                name="costCenter"
+                                required>
+
+                            <option value="">
+                                Select department first
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Year -->
+                    <div class="mb-3">
+
+                        <label for="modalYear"
+                               class="form-label">
+                            Year
+                        </label>
+
+                        <select class="form-select"
+                                id="modalYear"
+                                name="year"
+                                required>
+
+                            @for (int y = 2015; y <= DateTime.Now.Year + 10; y++)
+                            {
+                                if (y == DateTime.Now.Year)
+                                {
+                                    <option value="@y" selected>
+                                        @y
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@y">
+                                        @y
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Baseline Hour / Pc -->
+                    <div class="mb-3">
+
+                        <label for="modalBaselineHourPerPiece"
+                               class="form-label">
+                            Baseline Hour/Pc
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               id="modalBaselineHourPerPiece"
+                               name="baselineHourPerPiece"
+                               step="0.00001"
+                               min="0.00001"
+                               placeholder="contoh: 0.21501"
+                               required />
+
+                        <div class="form-text">
+                            Unit: Hours per piece.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Save
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPT: CASCADING DEPARTMENT -> COST CENTER
+     ========================================================= -->
+
+<script>
+    // Data Master dari database
+    const baselineDataMasterList = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        ViewBag.DataMasters as IEnumerable<LaborProductivity.Models.DataMaster>
+                        ?? Enumerable.Empty<LaborProductivity.Models.DataMaster>()
+                )
+        );
+
+    const modalDepartmentSelect =
+        document.getElementById("modalDepartmentId");
+
+    const modalCostCenterSelect =
+        document.getElementById("modalCostCenter");
+
+
+    // =====================================================
+    // DEPARTMENT -> COST CENTER
+    // =====================================================
+
+    modalDepartmentSelect.addEventListener("change", function () {
+
+        const departmentId = this.value;
+
+        modalCostCenterSelect.innerHTML = "";
+
+
+        if (departmentId === "") {
+
+            modalCostCenterSelect.innerHTML =
+                '<option value="">Select department first</option>';
+
+            return;
+        }
+
+
+        // Mengambil Cost Center yang unik
+        // berdasarkan Department yang dipilih
+        const costCenters = [];
+
+        baselineDataMasterList.forEach(function (dataMaster) {
+
+            if (
+                String(dataMaster.DepartmentId)
+                === String(departmentId)
+            ) {
+
+                if (!costCenters.includes(dataMaster.CostCenter)) {
+
+                    costCenters.push(dataMaster.CostCenter);
+
+                }
+
+            }
+
+        });
+
+
+        if (costCenters.length === 0) {
+
+            modalCostCenterSelect.innerHTML =
+                '<option value="">No cost center for this department</option>';
+
+            return;
+        }
+
+
+        // Option default
+        modalCostCenterSelect.innerHTML =
+            '<option value="">Select cost center</option>';
+
+
+        // Masukkan Cost Center ke dropdown
+        costCenters.forEach(function (costCenter) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = costCenter;
+
+            option.textContent = costCenter;
+
+            modalCostCenterSelect.appendChild(option);
+
+        });
+
+    });
+</script>

@@ -1,0 +1,256 @@
+﻿@model LaborProductivity.Models.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Tambah User";
+}
+
+<div class="container">
+
+    <h1>Tambah User</h1>
+
+    <form asp-controller="Admin"
+          asp-action="CreateUser"
+          method="post">
+
+        <!-- Email -->
+        <div>
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" />
+            <span asp-validation-for="Email"></span>
+        </div>
+
+        <!-- Password -->
+        <div>
+            <label asp-for="Password">Password</label>
+            <input asp-for="Password" type="password" />
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <!-- Role -->
+        <div>
+            <label asp-for="Role">Role</label>
+
+            <select asp-for="Role" id="roleSelect">
+                <option value="">-- Pilih Role --</option>
+                <option value="hr">Human Resource</option>
+                <option value="ci">Continuous Improvement</option>
+                <option value="production">Production</option>
+            </select>
+
+            <span asp-validation-for="Role"></span>
+        </div>
+
+        <!--
+            Bagian ini hanya digunakan untuk user Production.
+            HR dan CI tidak membutuhkan scope Production.
+        -->
+        <div id="productionScopeSection" style="display: none;">
+
+            <!-- Department -->
+            <div>
+                <label asp-for="DepartmentId">Department</label>
+
+                <select asp-for="DepartmentId"
+                        id="departmentSelect">
+
+                    <option value="">-- Pilih Department --</option>
+
+                    @foreach (var department in Model.Departments)
+                    {
+                        <option value="@department.DepartmentId">
+                            @department.DepartmentName
+                        </option>
+                    }
+
+                </select>
+
+                <span asp-validation-for="DepartmentId"></span>
+            </div>
+
+            <!-- CC / Product Group -->
+            <div>
+                <label asp-for="CostCenter">CC / Product Group</label>
+
+                <select id="dataMasterSelect"
+                        name="CostCenter">
+
+                    <option value="">
+                        -- Pilih CC / Product Group --
+                    </option>
+
+                    @foreach (var dataMaster in Model.DataMasters
+                                        .GroupBy(dm => new
+                                        {
+                                            dm.CostCenter,
+                                            dm.ProductGroup,
+                                            dm.DepartmentId
+                                        })
+                                        .OrderBy(g => g.Key.CostCenter)
+                                        .ThenBy(g => g.Key.ProductGroup))
+                    {
+                        <option value="@dataMaster.Key.CostCenter"
+                                data-department-id="@dataMaster.Key.DepartmentId"
+                                data-product-group="@dataMaster.Key.ProductGroup">
+
+                            @dataMaster.Key.CostCenter -
+                            @dataMaster.Key.ProductGroup
+
+                        </option>
+                    }
+
+                </select>
+
+                <span asp-validation-for="CostCenter"></span>
+
+                <!--
+                    Product Group dikirim sebagai field terpisah.
+                    User tidak memilih Product Line di sini.
+                -->
+                <input type="hidden"
+                       asp-for="ProductGroup"
+                       id="productGroupHidden" />
+
+                <p>
+                    Akun ini hanya dapat menginput data Production
+                    untuk Product Line yang berada dalam
+                    CC/Product Group yang dipilih.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Status -->
+        <div>
+            <label asp-for="Status">Status</label>
+
+            <select asp-for="Status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+
+            <span asp-validation-for="Status"></span>
+        </div>
+
+        <br />
+
+        <button type="submit">
+            Simpan User
+        </button>
+
+    </form>
+
+</div>
+
+@section Scripts {
+
+    <script>
+        const roleSelect =
+            document.getElementById("roleSelect");
+
+        const productionScopeSection =
+            document.getElementById("productionScopeSection");
+
+        const departmentSelect =
+            document.getElementById("departmentSelect");
+
+        const dataMasterSelect =
+            document.getElementById("dataMasterSelect");
+
+        const productGroupHidden =
+            document.getElementById("productGroupHidden");
+
+
+        // Menampilkan atau menyembunyikan scope Production.
+        function updateProductionScopeVisibility() {
+
+            if (roleSelect.value === "production") {
+
+                productionScopeSection.style.display = "block";
+
+            } else {
+
+                productionScopeSection.style.display = "none";
+
+                departmentSelect.value = "";
+                dataMasterSelect.value = "";
+                productGroupHidden.value = "";
+            }
+        }
+
+
+        // Memfilter pilihan CC/Product Group berdasarkan Department.
+        function updateCostCenterOptions() {
+
+            const selectedDepartment =
+                departmentSelect.value;
+
+            const options =
+                dataMasterSelect.querySelectorAll("option");
+
+            options.forEach(function (option, index) {
+
+                // Option pertama adalah placeholder.
+                if (index === 0) {
+                    option.hidden = false;
+                    return;
+                }
+
+                const optionDepartment =
+                    option.getAttribute("data-department-id");
+
+                if (
+                    selectedDepartment === "" ||
+                    optionDepartment === selectedDepartment
+                ) {
+                    option.hidden = false;
+                } else {
+                    option.hidden = true;
+                }
+            });
+
+            // Reset pilihan setelah Department berubah.
+            dataMasterSelect.value = "";
+            productGroupHidden.value = "";
+        }
+
+
+        // Ketika Role berubah.
+        roleSelect.addEventListener(
+            "change",
+            updateProductionScopeVisibility
+        );
+
+
+        // Ketika Department berubah.
+        departmentSelect.addEventListener(
+            "change",
+            updateCostCenterOptions
+        );
+
+
+        // Ketika CC/Product Group dipilih.
+        dataMasterSelect.addEventListener(
+            "change",
+            function () {
+
+                const selectedOption =
+                    dataMasterSelect.options[
+                        dataMasterSelect.selectedIndex
+                    ];
+
+                const productGroup =
+                    selectedOption.getAttribute(
+                        "data-product-group"
+                    );
+
+                productGroupHidden.value =
+                    productGroup || "";
+            }
+        );
+
+
+        // Kondisi awal halaman.
+        updateProductionScopeVisibility();
+
+    </script>
+}

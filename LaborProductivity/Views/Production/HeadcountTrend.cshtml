@@ -1,0 +1,578 @@
+﻿@model LaborProductivity.Models.HeadcountTrendViewModel
+
+@{
+    ViewData["Title"] = "Headcount Trend";
+
+    var chartMinWidth =
+        Math.Max(
+            700,
+            Model.ChartLabels.Count * 70);
+
+    // Supaya JSON yang dikirim ke JavaScript menggunakan
+    // camelCase (weekNo, displayText, dst.) bukan PascalCase.
+    var jsonOptions = new System.Text.Json.JsonSerializerOptions
+    {
+        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+    };
+}
+
+<section class="content-header">
+    <div class="content-header-left">
+        <h2>Headcount Trend</h2>
+    </div>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+
+            <!-- =====================================================
+                 FILTER BOX
+                 ===================================================== -->
+            <div class="box box-info mb-4">
+                <div class="box-body">
+
+                    <form asp-controller="HeadcountTrend"
+                          asp-action="Index"
+                          method="get"
+                          id="filterForm">
+
+                        <input type="hidden"
+                               name="show"
+                               value="true" />
+
+                        <div class="row"
+                             style="margin-bottom:18px;">
+
+                            <!-- ==============================
+                                 DEPARTMENT
+                                 ============================== -->
+                            <div class="col-md-3">
+                                <label class="form-label"
+                                       style="font-size:12px;color:#666;">
+                                    Department
+                                </label>
+
+                                <select class="form-select form-control input-sm"
+                                        id="department_id"
+                                        name="SelectedDepartmentId">
+
+                                    <option value="">
+                                        All Departments
+                                    </option>
+
+                                    @foreach (var department in Model.Departments)
+                                    {
+                                        <option value="@department.DepartmentId"
+                                                selected="@(Model.SelectedDepartmentId == department.DepartmentId)">
+                                            @department.DepartmentName
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- ==============================
+                                 CC - PRODUCT GROUP
+                                 ============================== -->
+                            <div class="col-md-3">
+                                <label class="form-label"
+                                       style="font-size:12px;color:#666;">
+                                    CC - Product Group
+                                </label>
+
+                                <select class="form-select form-control input-sm"
+                                        id="cost_center_select"
+                                        name="SelectedCostCenter">
+
+                                    <option value="">
+                                        All CC - Product Group
+                                    </option>
+
+                                    @foreach (var item in Model.CostCenters)
+                                    {
+                                        <option value="@item.CostCenter"
+                                                selected="@(item.CostCenter == Model.SelectedCostCenter)">
+                                            @item.DisplayText
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- ==============================
+                                 FISCAL YEAR
+                                 ============================== -->
+                            <div class="col-md-3">
+                                <label class="form-label"
+                                       style="font-size:12px;color:#666;">
+                                    Fiscal Year
+                                </label>
+
+                                <select class="form-select form-control input-sm"
+                                        name="SelectedFiscalYear"
+                                        id="fiscal_year">
+
+                                    @foreach (var year in Model.FiscalYears)
+                                    {
+                                        <option value="@year"
+                                                selected="@(year == Model.SelectedFiscalYear)">
+                                            @year
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- ==============================
+                                 FISCAL WEEK
+                                 ============================== -->
+                            <div class="col-md-3">
+                                <label class="form-label"
+                                       style="font-size:12px;color:#666;">
+                                    Fiscal Week
+                                </label>
+
+                                <select class="form-select form-control input-sm"
+                                        name="SelectedFiscalWeek"
+                                        id="fiscal_week">
+
+                                    <option value="">
+                                        All Weeks
+                                    </option>
+
+                                    @foreach (var week in Model.FiscalWeeks)
+                                    {
+                                        <option value="@week.WeekNo"
+                                                selected="@(Model.SelectedFiscalWeek == week.WeekNo)">
+                                            @week.DisplayText
+                                        </option>
+                                    }
+                                </select>
+
+                                <span class="help-block"
+                                      id="week_range_info"
+                                      style="margin-bottom:0;font-size:12px;">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div style="margin-top:16px;">
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Show Data
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+
+            <!-- =====================================================
+                 CHART BOX
+                 ===================================================== -->
+            <div class="box box-info"
+                 style="background:#ffff;">
+
+                <div class="box-body">
+
+                    @if (!Model.HasFiltered)
+                    {
+                        <p class="text-muted">
+                            Atur filter di atas lalu klik
+                            <strong>Show Data</strong>.
+                        </p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.DataMissingNotice))
+                    {
+                        <p class="text-muted">
+                            @Model.DataMissingNotice
+                        </p>
+                    }
+                    else if (!Model.Rows.Any() ||
+                    !Model.ChartDatasets.Any())
+                    {
+                        <p class="text-muted">
+                            Belum ada data Work Hours untuk filter ini.
+                        </p>
+                    }
+                    else
+                    {
+                        <h4 style="color:#333;margin-top:0;">
+                            Headcount Trend
+
+                            <small style="font-size:11px;color:#666;">
+                                (Weekly HC = ROUND(SUM Normal Hours / 40.25))
+                            </small>
+                        </h4>
+
+                        <div style="max-width:100%;overflow-x:auto;">
+                            <div style="position:relative;
+                                height:450px;
+                                min-width:@(chartMinWidth)px;">
+
+                                <canvas id="headcountTrendChart"></canvas>
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================================
+     CHART.JS
+     ============================================================= -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+@if (Model.HasFiltered &&
+     string.IsNullOrEmpty(Model.DataMissingNotice) &&
+     Model.ChartDatasets.Any())
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Label WK01, WK02, WK03, dst.
+            const chartLabels = @Html.Raw(
+                                                    System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels, jsonOptions)
+                                    );
+
+    // Dataset setiap Product Line.
+    const chartDatasets = @Html.Raw(
+                                        System.Text.Json.JsonSerializer.Serialize(Model.ChartDatasets, jsonOptions)
+                        );
+
+    // Palette warna untuk tiap dataset.
+    const palette = [
+        '#d9a8ac',
+        '#3e9d92',
+        '#e2635f',
+        '#8a3fa0',
+        '#a89dcf',
+        '#c95a7a',
+        '#4f8fce',
+        '#e0985f',
+        '#9dd9c9',
+        '#c9c9c9',
+        '#3fa9dc',
+        '#8dc63f'
+    ];
+
+            const datasets = chartDatasets.map(function (dataset, i) {
+                return {
+                    label: dataset.label,
+                    data: dataset.data,
+                    backgroundColor: palette[i % palette.length],
+                    stack: 'headcount'
+                };
+            });
+
+            const canvas = document.getElementById("headcountTrendChart");
+
+            if (!canvas) {
+                console.error("Canvas headcountTrendChart tidak ditemukan.");
+                return;
+            }
+
+            new Chart(canvas, {
+                type: "bar",
+
+                data: {
+                    labels: chartLabels,
+                    datasets: datasets
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                color: "#333",
+                                boxWidth: 12,
+                                padding: 14,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+
+                        tooltip: {
+                            mode: "index",
+                            intersect: false
+                        }
+                    },
+
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                color: "#555",
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: "Fiscal Week"
+                            }
+                        },
+
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: "#555"
+                            },
+                            title: {
+                                display: true,
+                                text: "Headcount"
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+
+<!-- =============================================================
+     CASCADING FILTER
+     ============================================================= -->
+
+<script>
+
+    // Data Master dari server.
+    var dataMasterList =
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.CostCenters, jsonOptions));
+
+    // Fiscal Calendar dari server.
+    var fiscalCalendar =
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                                Model.FiscalWeeks, jsonOptions));
+
+    var selectedCostCenter =
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                                Model.SelectedCostCenter ?? "", jsonOptions));
+
+    var selectedFiscalWeek =
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                                Model.SelectedFiscalWeek?.ToString() ?? "", jsonOptions));
+
+
+    var departmentEl =
+        document.getElementById('department_id');
+
+    var costCenterEl =
+        document.getElementById('cost_center_select');
+
+    var fiscalYearEl =
+        document.getElementById('fiscal_year');
+
+    var fiscalWeekEl =
+        document.getElementById('fiscal_week');
+
+
+    // ============================================================
+    // DEPARTMENT -> CC / PRODUCT GROUP
+    // ============================================================
+
+    function renderCostCenterOptions() {
+
+        if (!costCenterEl) {
+            return;
+        }
+
+        var html =
+            '<option value="">All CC - Product Group</option>';
+
+        dataMasterList.forEach(function (item) {
+
+            var selected =
+                String(item.costCenter) ===
+                String(selectedCostCenter)
+                    ? ' selected'
+                    : '';
+
+            html +=
+                '<option value="' +
+                item.costCenter +
+                '"' +
+                selected +
+                '>' +
+                item.displayText +
+                '</option>';
+
+        });
+
+        costCenterEl.innerHTML = html;
+    }
+
+
+    // ============================================================
+    // FISCAL YEAR -> FISCAL WEEK
+    // ============================================================
+
+    function renderFiscalWeekOptions() {
+
+        if (!fiscalWeekEl) {
+            return;
+        }
+
+        var html =
+            '<option value="">All Weeks</option>';
+
+        fiscalCalendar.forEach(function (fc) {
+
+            var selected =
+                String(fc.weekNo) ===
+                String(selectedFiscalWeek)
+                    ? ' selected'
+                    : '';
+
+            html +=
+                '<option value="' +
+                fc.weekNo +
+                '"' +
+                selected +
+                '>' +
+                fc.displayText +
+                '</option>';
+
+        });
+
+        fiscalWeekEl.innerHTML = html;
+
+        showWeekRangeInfo();
+    }
+
+
+    // ============================================================
+    // WEEK RANGE
+    // ============================================================
+
+    function showWeekRangeInfo() {
+
+        var info =
+            document.getElementById(
+                'week_range_info'
+            );
+
+        if (!info) {
+            return;
+        }
+
+        var wk =
+            fiscalWeekEl
+                ? fiscalWeekEl.value
+                : '';
+
+        if (wk === '') {
+
+            info.innerText = '';
+
+            return;
+        }
+
+        var match =
+            fiscalCalendar.find(
+                function (fc) {
+
+                    return String(fc.weekNo) ===
+                        String(wk);
+
+                }
+            );
+
+        if (match) {
+
+            info.innerText =
+                'Periode: ' +
+                match.startDate +
+                ' s/d ' +
+                match.endDate;
+
+        }
+        else {
+
+            info.innerText = '';
+
+        }
+    }
+
+
+    // ============================================================
+    // EVENT DEPARTMENT
+    // ============================================================
+
+    if (departmentEl) {
+
+        departmentEl.addEventListener(
+            'change',
+            function () {
+
+                selectedCostCenter = '';
+
+                renderCostCenterOptions();
+
+            }
+        );
+    }
+
+
+    // ============================================================
+    // EVENT FISCAL YEAR
+    // ============================================================
+
+    if (fiscalYearEl) {
+
+        fiscalYearEl.addEventListener(
+            'change',
+            function () {
+
+                selectedFiscalWeek = '';
+
+                renderFiscalWeekOptions();
+
+            }
+        );
+    }
+
+
+    if (fiscalWeekEl) {
+
+        fiscalWeekEl.addEventListener(
+            'change',
+            showWeekRangeInfo
+        );
+
+    }
+
+
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+
+            renderCostCenterOptions();
+
+            renderFiscalWeekOptions();
+
+        }
+    );
+
+</script>

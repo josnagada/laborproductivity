@@ -1,0 +1,487 @@
+﻿@model LaborProductivity.Models.Setting
+
+@{
+    ViewData["Title"] = "Web Setting";
+}
+
+<div class="container-fluid web-setting-page">
+
+    <!-- Header halaman -->
+    <div class="web-setting-header mb-4">
+        <div>
+            <h2 class="mb-1">Web Setting</h2>
+            <p class="text-muted mb-0">
+                Manage application appearance and landing page settings.
+            </p>
+        </div>
+    </div>
+
+    <!-- Pesan berhasil -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved Successfully',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+
+            });
+        </script>
+    }
+
+    <!-- Card Setting -->
+    <div class="web-setting-card">
+
+        <div class="web-setting-card-header">
+            <div>
+                <h5 class="mb-1">Application Setting</h5>
+                <small>
+                    Configure your application's identity and appearance.
+                </small>
+            </div>
+        </div>
+
+        <div class="web-setting-card-body">
+
+            <form asp-controller="Admin"
+                  asp-action="WebSetting"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                @Html.AntiForgeryToken()
+
+                <!-- =========================================
+                APPLICATION IDENTITY
+                ========================================= -->
+
+                <div class="setting-section">
+
+                    <div class="setting-section-header">
+                        <div>
+                            <h6>Application Identity</h6>
+                            <p>
+                                Configure the name and visual identity of the application.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="setting-section-body">
+
+                        <!-- Application Name -->
+                        <div class="mb-4">
+                            <label asp-for="AppName" class="form-label setting-label">
+                                Application Name
+                            </label>
+
+                            <input asp-for="AppName"
+                                   class="form-control setting-input" />
+
+                            <span asp-validation-for="AppName"
+                                  class="text-danger"></span>
+                        </div>
+
+
+                        <!-- Logo -->
+                        <div class="setting-upload">
+                            <div class="setting-upload-info">
+
+                                <label for="logoFile"
+                                       class="setting-label">
+                                    Logo
+                                </label>
+
+                                <p class="setting-help">
+                                    Logo utama yang digunakan pada aplikasi.
+                                </p>
+
+                                @if (!string.IsNullOrEmpty(Model.Logo))
+                                {
+                                    <div class="setting-preview logo-preview">
+                                        <img src="~/uploads/settings/@Model.Logo"
+                                             alt="Logo" />
+                                    </div>
+                                }
+
+                                <input type="file"
+                                       id="logoFile"
+                                       name="logoFile"
+                                       class="form-control setting-input"
+                                       accept=".jpg,.jpeg,.png,.webp" />
+
+                                <small class="setting-help">
+                                    JPG, JPEG, PNG, WEBP
+                                </small>
+
+                            </div>
+                        </div>
+
+
+                        <!-- Favicon + Login Icon -->
+                        <div class="row g-4 mt-1">
+
+                            <!-- Favicon -->
+                            <div class="col-md-6">
+
+                                <div class="setting-upload-card">
+
+                                    <label for="faviconFile"
+                                           class="setting-label">
+                                        Favicon
+                                    </label>
+
+                                    <p class="setting-help">
+                                        Icon kecil yang tampil pada browser.
+                                    </p>
+
+                                    @if (!string.IsNullOrEmpty(Model.Favicon))
+                                    {
+                                        <div class="setting-preview icon-preview">
+                                            <img src="~/upload/favicon.ico"
+                                                 alt="Favicon" />
+                                        </div>
+                                    }
+
+                                    <input type="file"
+                                           id="faviconFile"
+                                           name="faviconFile"
+                                           class="form-control setting-input"
+                                           accept=".ico,.png,.jpg,.jpeg,.webp" />
+
+                                    <small class="setting-help">
+                                        ICO, PNG, JPG, JPEG, WEBP
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Login Icon -->
+                            <div class="col-md-6">
+
+                                <div class="setting-upload-card">
+
+                                    <label for="loginIconFile"
+                                           class="setting-label">
+                                        Login Icon
+                                    </label>
+
+                                    <p class="setting-help">
+                                        Icon khusus yang digunakan pada halaman Login.
+                                    </p>
+
+                                    @if (!string.IsNullOrEmpty(Model.LoginIcon))
+                                    {
+                                        <div class="setting-preview icon-preview">
+                                            <img src="~/uploads/settings/@Model.LoginIcon"
+                                                 alt="Login Icon" />
+                                        </div>
+                                    }
+
+                                    <input type="file"
+                                           id="loginIconFile"
+                                           name="loginIconFile"
+                                           class="form-control setting-input"
+                                           accept=".jpg,.jpeg,.png,.webp" />
+
+                                    <small class="setting-help">
+                                        JPG, JPEG, PNG, WEBP
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================================
+                LANDING PAGE CAROUSEL
+                ========================================= -->
+
+                <div class="setting-section">
+
+                    <div class="setting-section-header">
+                        <div>
+                            <h6>Landing Page Carousel</h6>
+                            <p>
+                                Manage the images displayed on the landing page carousel.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="setting-section-body">
+
+                        <div class="row g-4">
+
+                            <!-- Carousel 1 -->
+                            <div class="col-lg-4">
+
+                                <div class="carousel-setting-card">
+
+                                    <div class="carousel-setting-title">
+                                        <span>01</span>
+                                        <strong>Carousel 1</strong>
+                                    </div>
+
+                                    <div class="carousel-preview">
+
+                                        @if (!string.IsNullOrEmpty(Model.Carousel1))
+                                        {
+                                            <img src="~/uploads/settings/@Model.Carousel1"
+                                                 alt="Carousel 1" />
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-empty">
+                                                No image
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                    <input type="file"
+                                           id="carousel1File"
+                                           name="carousel1File"
+                                           class="form-control setting-input"
+                                           accept=".jpg,.jpeg,.png,.webp" />
+
+                                    <small class="setting-help">
+                                        JPG, JPEG, PNG, WEBP
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Carousel 2 -->
+                            <div class="col-lg-4">
+
+                                <div class="carousel-setting-card">
+
+                                    <div class="carousel-setting-title">
+                                        <span>02</span>
+                                        <strong>Carousel 2</strong>
+                                    </div>
+
+                                    <div class="carousel-preview">
+
+                                        @if (!string.IsNullOrEmpty(Model.Carousel2))
+                                        {
+                                            <img src="~/uploads/settings/@Model.Carousel2"
+                                                 alt="Carousel 2" />
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-empty">
+                                                No image
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                    <input type="file"
+                                           id="carousel2File"
+                                           name="carousel2File"
+                                           class="form-control setting-input"
+                                           accept=".jpg,.jpeg,.png,.webp" />
+
+                                    <small class="setting-help">
+                                        JPG, JPEG, PNG, WEBP
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Carousel 3 -->
+                            <div class="col-lg-4">
+
+                                <div class="carousel-setting-card">
+
+                                    <div class="carousel-setting-title">
+                                        <span>03</span>
+                                        <strong>Carousel 3</strong>
+                                    </div>
+
+                                    <div class="carousel-preview">
+
+                                        @if (!string.IsNullOrEmpty(Model.Carousel3))
+                                        {
+                                            <img src="~/uploads/settings/@Model.Carousel3"
+                                                 alt="Carousel 3" />
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-empty">
+                                                No image
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                    <input type="file"
+                                           id="carousel3File"
+                                           name="carousel3File"
+                                           class="form-control setting-input"
+                                           accept=".jpg,.jpeg,.png,.webp" />
+
+                                    <small class="setting-help">
+                                        JPG, JPEG, PNG, WEBP
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================================
+                APPEARANCE
+                ========================================= -->
+
+                <div class="setting-section">
+
+                    <div class="setting-section-header">
+                        <div>
+                            <h6>Appearance</h6>
+                            <p>
+                                Customize the main color and footer information.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="setting-section-body">
+
+                        <div class="row g-4">
+
+                            <!-- Primary Color -->
+                            <div class="col-lg-5">
+
+                                <label asp-for="Color"
+                                       class="setting-label">
+                                    Primary Color
+                                </label>
+
+                                <div class="color-setting">
+
+                                    <input asp-for="Color"
+                                           type="color"
+                                           class="form-control form-control-color"
+                                           title="Pilih warna utama aplikasi" />
+
+                                    <div>
+                                        <strong id="colorPreviewText">
+                                            @Model.Color
+                                        </strong>
+
+                                        <small>
+                                            Main application color
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="Color"
+                                      class="text-danger"></span>
+
+                            </div>
+
+
+                            <!-- Footer Text -->
+                            <div class="col-lg-7">
+
+                                <label asp-for="FooterText"
+                                       class="setting-label">
+                                    Footer Text
+                                </label>
+
+                                <textarea asp-for="FooterText"
+                                          class="form-control setting-input"
+                                          rows="3"
+                                          placeholder="Enter footer text..."></textarea>
+
+                                <small class="setting-help">
+                                    Text yang akan ditampilkan pada bagian footer landing page.
+                                </small>
+
+                                <span asp-validation-for="FooterText"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Tombol Simpan -->
+
+                <div class="setting-actions">
+
+                    <button type="submit"
+                            class="save-setting-button">
+                        <span>Save Changes</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved Successfully',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+
+            });
+        </script>
+    }
+
+    <script>
+        // Menampilkan nilai HEX warna yang sedang dipilih.
+        const colorInput = document.getElementById("Color");
+        const colorPreviewText = document.getElementById("colorPreviewText");
+
+        if (colorInput && colorPreviewText) {
+            colorInput.addEventListener("input", function () {
+                colorPreviewText.textContent = this.value;
+            });
+        }
+    </script>
+
+}
